@@ -1,0 +1,22 @@
+[
+  {
+    "id": 1,
+    "message": "Can you provide a quote for a 200-guest wedding?",
+    "timestamp": "2025-05-06T10:00:00Z"
+  },
+  {
+    "id": 2,
+    "message": "Interested in outdoor venues, please share details.",
+    "timestamp": "2025-05-06T12:00:00Z"
+  },
+  {
+    "message": "200 people?",
+    "timestamp": "2025-05-06T08:21:04.669Z",
+    "id": 3
+  },
+  {
+    "message": "dio you work?",
+    "timestamp": "2025-05-11T00:16:28.380Z",
+    "id": 4
+  }
+]

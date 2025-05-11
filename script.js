@@ -46,6 +46,7 @@ const API_BASE_URL = 'https://weddingpal.onrender.com';
 
 // CSRF Token
 let csrfToken = '';
+
 async function fetchCsrfToken() {
     try {
         const response = await fetch(`${API_BASE_URL}/csrf-token`, { method: 'GET' });

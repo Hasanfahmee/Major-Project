@@ -10,6 +10,11 @@
     <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper/swiper-bundle.min.css" />
     <style>
+.hidden { display: none; }
+.user-message, .bot-message { margin: 8px 0; }
+.user-message { text-align: right; color: #1a202c; }
+.bot-message { text-align: left; color: #2d3748; }
+</style>
         body {
             font-family: 'Roboto', sans-serif;
             margin: 0;
@@ -739,12 +744,16 @@
                 <i class="fas fa-times"></i>
             </button>
         </div>
-        <div id="chatbot-messages"></div>
-        <form id="chatbot-form" onsubmit="sendChatbotMessage(event)">
-            <div class="flex">
-                <input type="text" id="chatbot-input" name="message" placeholder="Ask about WeddingPal..." required>
-                <button type="submit" class="bg-yellow-600 text-white py-2 px-4 rounded-r-lg hover:bg-yellow-700 transition">Send</button>
-            </div>
+       <div id="chatbot" class="fixed bottom-4 right-4 z-50 cursor-pointer" onclick="toggleChatbot()">
+    <img src="images/robot-icon.png" alt="Chatbot" class="w-12 h-12">
+</div>
+<div id="chatbot-window" class="fixed bottom-16 right-4 w-80 bg-white rounded-lg shadow-lg p-4 hidden z-50">
+    <div id="chatbot-messages" class="h-64 overflow-y-auto mb-4"></div>
+    <form onsubmit="sendChatbotMessage(event)">
+        <input id="chatbot-input" type="text" class="w-full p-2 border rounded" placeholder="Ask about your wedding...">
+        <button type="submit" class="mt-2 bg-yellow-600 text-white p-2 rounded w-full">Send</button>
+    </form>
+</div>
         </form>
     </div>
 

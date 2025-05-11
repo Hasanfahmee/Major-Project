@@ -1,15 +1,12 @@
 // Initialize Swiper for Home and Social Media
 document.addEventListener("DOMContentLoaded", function () {
     try {
-        // Home Slideshow (no arrows or pagination)
         if (typeof Swiper !== 'undefined') {
             const homeSwiper = new Swiper(".home-swiper", {
                 loop: true,
                 autoplay: { delay: 3000 },
                 speed: 800
             });
-
-            // Social Media Slideshow (with arrows and pagination)
             const socialSwiper = new Swiper(".social-media-swiper", {
                 loop: true,
                 slidesPerView: 3,
@@ -25,15 +22,13 @@ document.addEventListener("DOMContentLoaded", function () {
             });
         } else {
             console.error('Swiper library not loaded');
-            displayError('Slideshow functionality unavailable. Please refresh the page.');
+            displayError('Slideshow functionality unavailable.');
         }
-
-        // Initialize CSRF token and feedbacks
         fetchCsrfToken();
         fetchFeedbacks();
     } catch (error) {
         console.error('Initialization error:', error.message);
-        displayError('Failed to initialize. Please refresh the page or contact support at weddingpal@gmail.com.');
+        displayError('Failed to initialize. Contact support at weddingpal@gmail.com.');
     }
 });
 
@@ -47,7 +42,7 @@ function displayError(message) {
 }
 
 // API Base URL
-const API_BASE_URL = 'https://weddingpal-api.onrender.com';
+const API_BASE_URL = 'https://weddingpal.onrender.com';
 
 // CSRF Token
 let csrfToken = '';
@@ -67,7 +62,7 @@ async function fetchCsrfToken() {
         document.querySelectorAll('[name="csrf_token"]').forEach(input => {
             if (input) input.value = csrfToken;
         });
-        displayError('Running in offline mode due to server issues.');
+        displayError('Running in offline mode due to server connection issues.');
     }
 }
 
@@ -113,19 +108,14 @@ function performGlobalSearch() {
     if (!found) alert('No results found.');
 }
 
-// Registration Handling with Validation
+// Registration Handling
 async function handleRegistration(event) {
     event.preventDefault();
     console.log('Handling registration');
     const form = event.target;
-    if (!form) {
-        console.error('Registration form not found');
-        return;
-    }
+    if (!form) return;
     const formData = new FormData(form);
     const data = Object.fromEntries(formData);
-
-    // Client-side validation
     const emailRegex = /[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$/;
     const mobileRegex = /^\d{10}$/;
     if (!emailRegex.test(data.email)) {
@@ -136,22 +126,17 @@ async function handleRegistration(event) {
         alert('Please enter a valid 10-digit mobile number.');
         return;
     }
-
     const regForm = document.getElementById('reg-form');
     const regResponse = document.getElementById('registration-response');
     if (!regForm || !regResponse) {
         console.error('Registration elements not found');
-        displayError('Registration unavailable. Please try again later.');
+        displayError('Registration unavailable.');
         return;
     }
-
     try {
         const response = await fetch(`${API_BASE_URL}/register`, {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRF-Token': csrfToken
-            },
+            headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': csrfToken },
             body: JSON.stringify(data)
         });
         if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
@@ -178,7 +163,7 @@ function closeResponse() {
         regFormElement.reset();
     } else {
         console.error('Registration elements not found');
-        displayError('Unable to close response. Please refresh the page.');
+        displayError('Unable to close response.');
     }
 }
 
@@ -188,10 +173,7 @@ async function makeCall() {
     try {
         const response = await fetch(`${API_BASE_URL}/call`, {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRF-Token': csrfToken
-            }
+            headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': csrfToken }
         });
         if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
         const result = await response.json();
@@ -207,27 +189,15 @@ async function scheduleMeeting(event) {
     event.preventDefault();
     console.log('Scheduling meeting');
     const form = event.target;
-    if (!form) {
-        console.error('Schedule form not found');
-        return;
-    }
+    if (!form) return;
     const formData = new FormData(form);
     const data = Object.fromEntries(formData);
-    console.log('Meeting data:', data);
-
     const meetingResponse = document.getElementById('meeting-response');
-    if (!meetingResponse) {
-        console.error('Meeting response element not found');
-        return;
-    }
-
+    if (!meetingResponse) return;
     try {
         const response = await fetch(`${API_BASE_URL}/schedule`, {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRF-Token': csrfToken
-            },
+            headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': csrfToken },
             body: JSON.stringify(data)
         });
         if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
@@ -247,36 +217,24 @@ async function sendText(event) {
     event.preventDefault();
     console.log('Sending message');
     const form = event.target;
-    if (!form) {
-        console.error('Text form not found');
-        return;
-    }
+    if (!form) return;
     const formData = new FormData(form);
     const data = Object.fromEntries(formData);
-    console.log('Message data:', data);
-
     const textResponse = document.getElementById('text-response');
-    if (!textResponse) {
-        console.error('Text response element not found');
-        return;
-    }
-
+    if (!textResponse) return;
     try {
         const response = await fetch(`${API_BASE_URL}/text`, {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRF-Token': csrfToken
-            },
+            headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': csrfToken },
             body: JSON.stringify(data)
         });
         if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
         const result = await response.json();
-        textResponse.innerHTML = `${result.message || 'Message sent!'}<br><span class="text-yellow-600">WeddingPal: Thanks for your message! We’ll get back to you soon.</span>`;
+        textResponse.innerHTML = `${result.message || 'Message sent!'}<br><span class="text-yellow-600">WeddingPal: Thanks for your message!</span>`;
         form.reset();
     } catch (error) {
         console.error('Message error:', error.message);
-        textResponse.innerHTML = `<span class="text-yellow-600">WeddingPal: Thanks for your message! We’ll get back to you soon (offline mode).</span>`;
+        textResponse.innerHTML = `<span class="text-yellow-600">WeddingPal: Thanks for your message! (offline mode)</span>`;
         form.reset();
         displayError('Message sent in offline mode.');
     }
@@ -287,27 +245,15 @@ async function submitFAQ(event) {
     event.preventDefault();
     console.log('Submitting FAQ');
     const form = event.target;
-    if (!form) {
-        console.error('FAQ form not found');
-        return;
-    }
+    if (!form) return;
     const formData = new FormData(form);
     const data = Object.fromEntries(formData);
-    console.log('FAQ data:', data);
-
     const faqResponse = document.getElementById('faq-response');
-    if (!faqResponse) {
-        console.error('FAQ response element not found');
-        return;
-    }
-
+    if (!faqResponse) return;
     try {
         const response = await fetch(`${API_BASE_URL}/faq`, {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRF-Token': csrfToken
-            },
+            headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': csrfToken },
             body: JSON.stringify(data)
         });
         if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
@@ -327,34 +273,20 @@ async function submitFeedback(event) {
     event.preventDefault();
     console.log('Submitting feedback');
     const form = event.target;
-    if (!form) {
-        console.error('Feedback form not found');
-        return;
-    }
+    if (!form) return;
     const formData = new FormData(form);
     const data = Object.fromEntries(formData);
-    console.log('Feedback data:', data);
-
-    // Client-side validation
     const emailRegex = /[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$/;
     if (!emailRegex.test(data.email)) {
         alert('Please enter a valid email address.');
         return;
     }
-
     const feedbackResponse = document.getElementById('feedback-response');
-    if (!feedbackResponse) {
-        console.error('Feedback response element not found');
-        return;
-    }
-
+    if (!feedbackResponse) return;
     try {
         const response = await fetch(`${API_BASE_URL}/feedback`, {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRF-Token': csrfToken
-            },
+            headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': csrfToken },
             body: JSON.stringify(data)
         });
         if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
@@ -375,11 +307,7 @@ async function submitFeedback(event) {
 async function fetchFeedbacks() {
     console.log('Fetching feedbacks');
     const feedbackList = document.getElementById('feedback-list');
-    if (!feedbackList) {
-        console.error('Feedback list element not found');
-        return;
-    }
-
+    if (!feedbackList) return;
     try {
         const response = await fetch(`${API_BASE_URL}/feedbacks`);
         if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
@@ -410,13 +338,14 @@ async function fetchFeedbacks() {
 function toggleChatbot() {
     console.log('Toggling chatbot');
     const chatbotWindow = document.getElementById('chatbot-window');
-    if (chatbotWindow) {
-        chatbotWindow.classList.toggle('hidden');
-        console.log('Chatbot toggled:', chatbotWindow.classList.contains('hidden') ? 'Hidden' : 'Visible');
-    } else {
-        console.error('Chatbot window not found');
-        displayError('Chatbot unavailable. Please contact support at weddingpal@gmail.com.');
+    const chatbotIcon = document.getElementById('chatbot');
+    if (!chatbotWindow || !chatbotIcon) {
+        console.error('Chatbot elements not found:', { window: !!chatbotWindow, icon: !!chatbotIcon });
+        displayError('Chatbot unavailable. Contact support at weddingpal@gmail.com.');
+        return;
     }
+    chatbotWindow.classList.toggle('hidden');
+    console.log('Chatbot toggled:', chatbotWindow.classList.contains('hidden') ? 'Hidden' : 'Visible');
 }
 
 function sendChatbotMessage(event) {
@@ -425,55 +354,33 @@ function sendChatbotMessage(event) {
     const input = document.getElementById('chatbot-input');
     const messages = document.getElementById('chatbot-messages');
     if (!input || !messages) {
-        console.error('Chatbot input or messages container not found');
-        displayError('Chatbot unavailable. Please contact support at weddingpal@gmail.com.');
+        console.error('Chatbot input or messages not found');
+        displayError('Chatbot unavailable.');
         return;
     }
     const message = input.value.trim();
-    if (!message) {
-        console.log('Empty message');
-        return;
-    }
-
-    // Add user message
+    if (!message) return;
     const userMessage = document.createElement('p');
     userMessage.className = 'user-message';
     userMessage.innerHTML = `<strong>You:</strong> ${message}`;
     messages.appendChild(userMessage);
-
-    // Generate bot response
-    let response = "I'm sorry, I didn't understand that. Try asking about booking, venues, costs, cancellations, or how to contact us!";
+    let response = "I'm sorry, I didn't understand that. Try asking about booking, venues, costs, or cancellations!";
     const lowerMessage = message.toLowerCase();
-
-    if (lowerMessage.includes('book') || lowerMessage.includes('planner') || lowerMessage.includes('how to start') || lowerMessage.includes('register')) {
-        response = "To book a WeddingPal planner, go to the Registration section, fill out the form with your wedding details, and schedule a call or meeting to get started.";
-    } else if (lowerMessage.includes('venue') || lowerMessage.includes('venues') || lowerMessage.includes('location') || lowerMessage.includes('sangeet') || lowerMessage.includes('mehendi') || lowerMessage.includes('reception') || lowerMessage.includes('ceremony')) {
-        response = "We offer venues for Sangeet, Mehendi, Reception, and Ceremony. Check the Venues section to explore detailed designs and features for each event.";
-    } else if (lowerMessage.includes('cost') || lowerMessage.includes('fee') || lowerMessage.includes('price') || lowerMessage.includes('how much')) {
-        response = "The advance fee for booking a WeddingPal planner is mentioned in the FAQ section. For detailed pricing, please register and schedule a meeting with us.";
-    } else if (lowerMessage.includes('cancel') || lowerMessage.includes('cancellation') || lowerMessage.includes('refund')) {
-        response = "To cancel your booking, contact our customer care team at weddingpal@gmail.com or 9611707778, or use the cancellation option in our booking system.";
-    } else if (lowerMessage.includes('contact') || lowerMessage.includes('reach') || lowerMessage.includes('support') || lowerMessage.includes('help')) {
-        response = "You can reach us at weddingpal@gmail.com or call 9611707778. Check the Contact section for more details and social media links.";
-    } else if (lowerMessage.includes('faq') || lowerMessage.includes('question') || lowerMessage.includes('ask') || lowerMessage.includes('submit')) {
-        response = "Visit the FAQ section to see common questions or submit a new one using the form provided there.";
-    } else if (lowerMessage.includes('feedback') || lowerMessage.includes('review') || lowerMessage.includes('comment')) {
-        response = "You can submit feedback in the Feedbacks section. Just fill out the form with your name, email, and comments.";
-    } else if (lowerMessage.includes('vendor') || lowerMessage.includes('caterer') || lowerMessage.includes('photographer') || lowerMessage.includes('decorator')) {
-        response = "We can help with vendors like caterers, photographers, and decorators. Register and discuss your needs during your consultation.";
-    } else if (lowerMessage.includes('timeline') || lowerMessage.includes('schedule') || lowerMessage.includes('plan') || lowerMessage.includes('when')) {
-        response = "After booking, we’ll create a personalized timeline for your wedding. Start by registering and scheduling a meeting to plan your events.";
-    } else if (lowerMessage.includes('custom') || lowerMessage.includes('personalize') || lowerMessage.includes('theme') || lowerMessage.includes('style')) {
-        response = "We offer customization for themes, decor, and more. Share your preferences during the registration process or in your consultation.";
+    if (lowerMessage.includes('book') || lowerMessage.includes('planner') || lowerMessage.includes('register')) {
+        response = "To book a WeddingPal planner, go to the Registration section and fill out the form.";
+    } else if (lowerMessage.includes('venue') || lowerMessage.includes('sangeet') || lowerMessage.includes('mehendi')) {
+        response = "We offer venues for Sangeet, Mehendi, Reception, and Ceremony. Check the Venues section.";
+    } else if (lowerMessage.includes('cost') || lowerMessage.includes('price')) {
+        response = "Pricing details are in the FAQ section. Register for a detailed quote.";
+    } else if (lowerMessage.includes('cancel') || lowerMessage.includes('cancellation')) {
+        response = "To cancel, contact us at weddingpal@gmail.com or 9611707778.";
+    } else if (lowerMessage.includes('contact') || lowerMessage.includes('support')) {
+        response = "Reach us at weddingpal@gmail.com or 9611707778. See the Contact section.";
     }
-
-    // Add bot response
     const botMessage = document.createElement('p');
     botMessage.className = 'bot-message';
     botMessage.innerHTML = `<strong>WeddingPal:</strong> ${response}`;
     messages.appendChild(botMessage);
-
-    // Scroll to bottom
     messages.scrollTop = messages.scrollHeight;
     input.value = '';
     console.log('Chatbot response:', response);
@@ -487,64 +394,42 @@ function showVenue(type) {
     const venueDetailsDiv = document.getElementById("venue-details");
     if (!venueSection || !venueImagesDiv || !venueDetailsDiv) {
         console.error('Venue elements not found');
-        displayError('Venue details unavailable. Please try again later.');
+        displayError('Venue details unavailable.');
         return;
     }
-
     venueImagesDiv.innerHTML = "";
     venueDetailsDiv.innerHTML = "";
-
     const venueDetails = {
-        "sangeet": "A lively evening with DJ nights, stage setup, and themed decor to celebrate the joy of togetherness.",
-        "mehendi": "A colorful afternoon with floral decor, henna artists, refreshments, and cozy seating arrangements.",
-        "reception": "A grand celebration with elegant lighting, music bands, luxurious buffet, and curated themes.",
-        "ceremony": "A sacred setting with traditional mandap, rituals, floral designs, and divine ambiance."
+        "sangeet": "A lively evening with DJ nights, stage setup, and themed decor.",
+        "mehendi": "A colorful afternoon with floral decor and henna artists.",
+        "reception": "A grand celebration with elegant lighting and music bands.",
+        "ceremony": "A sacred setting with traditional mandap and floral designs."
     };
-
     const venueImages = {
-        "sangeet": ["image s1.png", "image s2.png", "image s3.png", "image s4.png", "image s5.png", "image s6.png", "image s7.png", "image s8.png"],
-        "mehendi": ["image m1.png", "image m2.png", "image m3.png", "image m4.png", "image m5.png", "image m6.png", "image m7.png", "image m8.png"],
-        "reception": ["image r1.png", "image r2.png", "image r3.png", "image r4.png", "image r5.png", "image r6.png", "image r7.png", "image r8.png"],
-        "ceremony": ["image c1.png", "image c2.png", "image c3.png", "image c4.png", "image c5.png", "image c6.png", "image c7.png", "image c8.png"]
+        "sangeet": ["image s1.png", "image s2.png", "image s3.png", "image s4.png"],
+        "mehendi": ["image m1.png", "image m2.png", "image m3.png", "image m4.png"],
+        "reception": ["image r1.png", "image r2.png", "image r3.png", "image r4.png"],
+        "ceremony": ["image c1.png", "image c2.png", "image c3.png", "image c4.png"]
     };
-
     const venueFeatures = {
-        "image s1.png": ["Live Band", "Red Carpet Entry", "Light Tunnel", "Fireworks", "Photobooth", "Table Service"],
-        "image s2.png": ["Luxury Chairs", "Dance Floor", "Open Bar", "Reception Cake", "Backdrop Panel", "Golden Theme"],
-        "image s3.png": ["Rose Decor", "LED Letters", "Ceiling Drapes", "Couple Throne", "Food Counters", "Jazz Music"],
-        "image s4.png": ["Romantic Lighting", "Decor Lounge", "String Lights", "Entry Pathway", "Customized Props", "Hanging Florals"],
-        "image s5.png": ["Welcome Board", "Artist Stage", "Mood Lighting", "Soundproof Setup", "Interactive Entry", "Themed Chairs"],
-        "image s6.png": ["Fog Machine", "Bridal Entry Music", "Groom Entry Jeep", "Live Instrumental", "Gold Curtain", "Dance Props"],
-        "image s7.png": ["Laser Show", "3D Mapping", "Stage Skirt", "Open Bar Area", "Dhol Players", "LED Rings"],
-        "image s8.png": ["Color Drapes", "Fairy Light Path", "Floating Lanterns", "Backstage Greenroom", "Live Stream Setup", "Fan Zone"],
-        "image m1.png": ["Henna Artists", "Colorful Cushions", "Flower Jewelry", "Mehendi Cones", "Rajasthani Decor", "Mocktails"],
-        "image m2.png": ["Rangoli Setup", "Traditional Folk Music", "Gota Patti Decor", "Cane Furniture", "Banana Leaf Stall", "Fragrance Station"],
-        "image m3.png": ["Garden Setup", "Swing Decor", "Garland Making", "Welcome Drinks", "Live Singers", "Thematic Dress Code"],
-        "image m4.png": ["Floral Canopy", "Floor Seating", "Bride Entry Music", "Pichwai Prints", "DIY Booth", "Jewelry Station"],
-        "image m5.png": ["Henna Artists", "Colorful Cushions", "Flower Jewelry", "Mehendi Cones", "Rajasthani Decor", "Mocktails"],
-        "image m6.png": ["Rangoli Setup", "Traditional Folk Music", "Gota Patti Decor", "Cane Furniture", "Banana Leaf Stall", "Fragrance Station"],
-        "image m7.png": ["Garden Setup", "Swing Decor", "Garland Making", "Welcome Drinks", "Live Singers", "Thematic Dress Code"],
-        "image m8.png": ["Floral Canopy", "Floor Seating", "Bride Entry Music", "Pichwai Prints", "DIY Booth", "Jewelry Station"],
-        "image r1.png": ["Live Band", "Red Carpet Entry", "Light Tunnel", "Fireworks", "Photobooth", "Table Service"],
-        "image r2.png": ["Luxury Chairs", "Dance Floor", "Open Bar", "Reception Cake", "Backdrop Panel", "Golden Theme"],
-        "image r3.png": ["Rose Decor", "LED Letters", "Ceiling Drapes", "Couple Throne", "Food Counters", "Jazz Music"],
-        "image r4.png": ["Romantic Lighting", "Decor Lounge", "String Lights", "Entry Pathway", "Customized Props", "Hanging Florals"],
-        "image r5.png": ["Live Band", "Red Carpet Entry", "Light Tunnel", "Fireworks", "Photobooth", "Table Service"],
-        "image r6.png": ["Luxury Chairs", "Dance Floor", "Open Bar", "Reception Cake", "Backdrop Panel", "Golden Theme"],
-        "image r7.png": ["Rose Decor", "LED Letters", "Ceiling Drapes", "Couple Throne", "Food Counters", "Jazz Music"],
-        "image r8.png": ["Romantic Lighting", "Decor Lounge", "String Lights", "Entry Pathway", "Customized Props", "Hanging Florals"],
-        "image c1.png": ["Mandap Decor", "Sacred Fire Setup", "Puja Samagri", "Ganesha Idol", "Traditional Seating", "Marigold Design"],
-        "image c2.png": ["South Indian Setup", "Banana Leaf Decor", "Stage Flowers", "Priest Services", "Bride Umbrella", "Carnatic Music"],
-        "image c3.png": ["Royal Mandap", "Chandan Station", "Spiritual Music", "Kalash Setup", "Chorus Singers", "Handmade Rangoli"],
-        "image c4.png": ["Temple Theme", "Red-Yellow Theme", "Ornamental Drapes", "Flute Player", "Havan Kund", "Vedic Chanting"],
-        "image c5.png": ["Mandap Decor", "Sacred Fire Setup", "Puja Samagri", "Ganesha Idol", "Traditional Seating", "Marigold Design"],
-        "image c6.png": ["South Indian Setup", "Banana Leaf Decor", "Stage Flowers", "Priest Services", "Bride Umbrella", "Carnatic Music"],
-        "image c7.png": ["Royal Mandap", "Chandan Station", "Spiritual Music", "Kalash Setup", "Chorus Singers", "Handmade Rangoli"],
-        "image c8.png": ["Temple Theme", "Red-Yellow Theme", "Ornamental Drapes", "Flute Player", "Havan Kund", "Vedic Chanting"]
+        "image s1.png": ["Live Band", "Red Carpet Entry"],
+        "image s2.png": ["Luxury Chairs", "Dance Floor"],
+        "image s3.png": ["Rose Decor", "LED Letters"],
+        "image s4.png": ["Romantic Lighting", "Decor Lounge"],
+        "image m1.png": ["Henna Artists", "Colorful Cushions"],
+        "image m2.png": ["Rangoli Setup", "Folk Music"],
+        "image m3.png": ["Garden Setup", "Swing Decor"],
+        "image m4.png": ["Floral Canopy", "Floor Seating"],
+        "image r1.png": ["Live Band", "Red Carpet Entry"],
+        "image r2.png": ["Luxury Chairs", "Dance Floor"],
+        "image r3.png": ["Rose Decor", "LED Letters"],
+        "image r4.png": ["Romantic Lighting", "Decor Lounge"],
+        "image c1.png": ["Mandap Decor", "Sacred Fire Setup"],
+        "image c2.png": ["South Indian Setup", "Banana Leaf Decor"],
+        "image c3.png": ["Royal Mandap", "Spiritual Music"],
+        "image c4.png": ["Temple Theme", "Vedic Chanting"]
     };
-
     venueDetailsDiv.innerHTML = `<p class="text-xl bg-yellow-200 rounded-lg p-4 shadow-md">${venueDetails[type]}</p>`;
-
     venueImages[type].forEach(image => {
         const card = document.createElement("div");
         card.className = "bg-white rounded-lg shadow-md p-4 w-72 text-left";
@@ -563,7 +448,6 @@ function showVenue(type) {
         card.appendChild(featureList);
         venueImagesDiv.appendChild(card);
     });
-
     venueSection.classList.remove("hidden");
     venueSection.scrollIntoView({ behavior: "smooth" });
 }

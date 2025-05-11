@@ -1,54 +1,90 @@
 const express = require('express');
+const { createClient } = require('@supabase/supabase-js');
 const cors = require('cors');
-const path = require('path');
 const app = express();
 
-// Enable CORS for frontend
-app.use(cors({ origin: 'https://weddingpal.onrender.com' }));
+app.use(cors());
 app.use(express.json());
 
-// Serve static files
-app.use(express.static(path.join(__dirname)));
+// Initialize Supabase
+const supabase = createClient(
+  process.env.SUPABASE_URL,
+  process.env.SUPABASE_KEY
+);
 
-// Serve index.html
-app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'index.html'));
-});
-
-// Mock API endpoints
-app.get('/csrf-token', (req, res) => {
-    res.json({ csrfToken: 'mock-csrf-token' });
-});
-app.post('/register', (req, res) => {
-    res.json({ message: 'Registration successful' });
-});
-app.post('/call', (req, res) => {
-    res.json({ message: 'Call scheduled' });
-});
-app.post('/schedule', (req, res) => {
-    res.json({ message: 'Meeting scheduled' });
-});
-app.post('/text', (req, res) => {
-    res.json({ message: 'Message sent' });
-});
-app.post('/faq', (req, res) => {
-    res.json({ message: 'Question submitted' });
-});
-app.post('/feedback', (req, res) => {
-    res.json({ message: 'Feedback submitted' });
-});
-app.get('/feedbacks', (req, res) => {
-    res.json([
-        { name: 'John', email: 'john@example.com', feedback: 'Great service!' }
-    ]);
+// Registration Endpoint
+app.post('/register', async (req, res) => {
+  try {
+    const { error } = await supabase.from('registrations').insert([req.body]);
+    if (error) throw error;
+    res.status(200).json({ message: 'Registration successful' });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
 });
 
-// Fallback for SPA routing
-app.get('*', (req, res) => {
-    res.sendFile(path.join(__dirname, 'index.html'));
+// Call Scheduling (Placeholder)
+app.post('/call', async (req, res) => {
+  // Implement call scheduling logic (e.g., integrate with Twilio or Calendly)
+  res.status(200).json({ message: 'Call scheduled successfully' });
 });
 
-const PORT = process.env.PORT || 10000;
+// Meeting Scheduling
+app.post('/schedule', async (req, res) => {
+  try {
+    const { error } = await supabase.from('schedules').insert([req.body]);
+    if (error) throw error;
+    res.status(200).json({ message: 'Meeting scheduled successfully' });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+// Text Message
+app.post('/text', async (req, res) => {
+  try {
+    const { error } = await supabase.from('messages').insert([req.body]);
+    if (error) throw error;
+    res.status(200).json({ message: 'Message sent successfully' });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+// FAQ Submission
+app.post('/faq', async (req, res) => {
+  try {
+    const { error } = await supabase.from('faqs').insert([req.body]);
+    if (error) throw error;
+    res.status(200).json({ message: 'Question submitted successfully' });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+// Feedback Submission
+app.post('/feedback', async (req, res) => {
+  try {
+    const { error } = await supabase.from('feedbacks').insert([req.body]);
+    if (error) throw error;
+    res.status(200).json({ message: 'Feedback submitted successfully' });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+// Fetch Feedbacks
+app.get('/feedbacks', async (req, res) => {
+  try {
+    const { data, error } = await supabase.from('feedbacks').select('*').order('created_at', { ascending: false });
+    if (error) throw error;
+    res.status(200).json(data);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
+  console.log(`Server running on port ${PORT}`);
 });

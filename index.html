@@ -5,10 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>WeddingPal</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&family=Sacramento&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper/swiper-bundle.min.css" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <style>
         body {
             font-family: 'Roboto', sans-serif;
@@ -92,7 +91,6 @@
             box-shadow: 0 4px 20px rgba(0,0,0,0.2);
             z-index: 1000;
             overflow: hidden;
-            display: none;
         }
         #chatbot-messages {
             max-height: 250px;
@@ -133,826 +131,780 @@
         ::placeholder {
             color: #9ca3af;
         }
+        .loading::after {
+            content: '';
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 2px solid #fff;
+            border-radius: 50%;
+            border-top-color: transparent;
+            animation: spin 1s linear infinite;
+            margin-left: 8px;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
     </style>
 </head>
 <body class="bg-white text-black">
-
-<!-- Header -->
-<header class="bg-red-800 text-white">
-    <div class="container mx-auto flex justify-between items-center py-4 px-6">
-        <div class="text-2xl script-font">WeddingPal</div>
-        <nav class="space-x-4">
-            <a href="#home" class="nav-link hover:text-gray-300">HOME</a>
-            <a href="#about" class="nav-link hover:text-gray-300">ABOUT US</a>
-            <a href="#ratings" class="nav-link hover:text-gray-300">RATINGS</a>
-            <a href="#venues" class="nav-link hover:text-gray-300">VENUES</a>
-            <a href="#faq" class="nav-link hover:text-gray-300">FAQ</a>
-            <a href="#feedbacks" class="nav-link hover:text-gray-300">FEEDBACKS</a>
-            <a href="#footer" class="nav-link hover:text-gray-300">CONTACT</a>
-        </nav>
-        <div class="relative">
-            <input type="text" id="global-search" placeholder="Search..." class="px-4 py-2 pr-10 rounded-md text-black focus:outline-none">
-            <button onclick="performGlobalSearch()" class="absolute right-3 top-2 text-gray-600 hover:text-gray-800">
-                <i class="fas fa-search"></i>
-            </button>
-        </div>
-    </div>
-</header>
-
-<!-- Swiper.js -->
-<script src="https://cdn.jsdelivr.net/npm/swiper/swiper-bundle.min.js"></script>
-
-<!-- Hero Section with Swiper.js -->
-<section id="home" class="relative text-center py-1">
-    <div class="swiper-container w-full h-[500px]">
-        <div class="swiper-wrapper">
-            <div class="swiper-slide relative">
-                <img src="images/image 4.png" alt="Bride and groom on a balcony" class="w-full h-full object-cover">
-                <p class="absolute bottom-5 left-5 text-white text-3xl bg-black bg-opacity-50 px-4 py-2 rounded-lg">
-                    Making memories that last forever
-                </p>
-            </div>
-            <div class="swiper-slide relative">
-                <img src="images/image 6.png" alt="Wedding couple dancing" class="w-full h-full object-cover">
-                <p class="absolute bottom-5 right-5 text-white text-3xl bg-black bg-opacity-50 px-4 py-2 rounded-lg">
-                    A love story written in time
-                </p>
-            </div>
-            <div class="swiper-slide relative">
-                <img src="images/image 5.png" alt="Romantic wedding moment" class="w-full h-full object-cover">
-                <p class="absolute bottom-5 left-5 text-white text-3xl bg-black bg-opacity-50 px-4 py-2 rounded-lg">
-                    Cherishing every special moment
-                </p>
+    <!-- Header -->
+    <header class="bg-red-800 text-white">
+        <div class="container mx-auto flex justify-between items-center py-4 px-6">
+            <div class="text-2xl script-font">WeddingPal</div>
+            <nav class="space-x-4">
+                <a href="#home" class="nav-link hover:text-gray-300">HOME</a>
+                <a href="#about" class="nav-link hover:text-gray-300">ABOUT US</a>
+                <a href="#ratings" class="nav-link hover:text-gray-300">RATINGS</a>
+                <a href="#venues" class="nav-link hover:text-gray-300">VENUES</a>
+                <a href="#faq" class="nav-link hover:text-gray-300">FAQ</a>
+                <a href="#feedbacks" class="nav-link hover:text-gray-300">FEEDBACKS</a>
+                <a href="#footer" class="nav-link hover:text-gray-300">CONTACT</a>
+            </nav>
+            <div class="relative">
+                <input type="text" id="global-search" placeholder="Search..." class="px-4 py-2 pr-10 rounded-md text-black focus:outline-none" aria-label="Search the website">
+                <button id="search-button" class="absolute right-3 top-2 text-gray-600 hover:text-gray-800">
+                    <i class="fas fa-search"></i>
+                </button>
             </div>
         </div>
-        <div class="swiper-button-next text-white"></div>
-        <div class="swiper-button-prev text-white"></div>
-        <div class="swiper-pagination"></div>
-    </div>
-</section>
+    </header>
 
-<!-- Swiper Initialization -->
-<script>
-    document.addEventListener("DOMContentLoaded", function () {
-        new Swiper(".swiper-container", {
-            loop: true,
-            autoplay: { delay: 3000 },
-            navigation: { nextEl: ".swiper-button-next", prevEl: ".swiper-button-prev" },
-            pagination: { el: ".swiper-pagination", clickable: true },
-            effect: 'fade',
-            speed: 800
-        });
-        fetchFeedbacks();
-    });
-</script>
+    <!-- Swiper.js -->
+    <script src="https://cdn.jsdelivr.net/npm/swiper/swiper-bundle.min.js"></script>
 
-<!-- Planning Section -->
-<section id="about" class="bg-red-800 text-white text-center py-8">
-    <h2 class="text-5xl text-yellow-600">Planning a dream wedding?</h2>
-    <p class="mt-4 leading-relaxed text-2xl">
-        Planning a dream wedding is an exhilarating journey that transforms a couple’s love story into a breathtaking reality.
-        From choosing the perfect venue that sets the stage for romance to designing exquisite décor that reflects their unique style,
-        every detail contributes to an unforgettable experience. A carefully curated menu, seamless entertainment, and meticulous
-        coordination ensure that the celebration flows effortlessly, allowing the couple and their loved ones to fully immerse
-        themselves in the joy of the occasion. Thoughtful planning eliminates stress, ensuring that every magical moment is cherished.
-        With a clear vision, expert guidance, and heartfelt personal touches, a dream wedding is more than just an event—it becomes
-        a timeless celebration of love, happiness, and the start of a beautiful new journey together.
-    </p>
-    <button onclick="navigateToSection('registration')" class="bg-yellow-600 text-white py-2 px-4 rounded mt-4">Start Planning Now</button>
-</section>
+    <!-- Hero Section with Swiper.js -->
+    <section id="home" class="relative text-center py-1">
+        <div class="swiper-container w-full h-[500px]">
+            <div class="swiper-wrapper">
+                <div class="swiper-slide relative">
+                    <img src="/images/image4.png" alt="Bride and groom on a balcony" class="w-full h-full object-cover">
+                    <p class="absolute bottom-5 left-5 text-white text-3xl bg-black bg-opacity-50 px-4 py-2 rounded-lg">
+                        Making memories that last forever
+                    </p>
+                </div>
+                <div class="swiper-slide relative">
+                    <img src="/images/image6.png" alt="Wedding couple dancing" class="w-full h-full object-cover">
+                    <p class="absolute bottom-5 right-5 text-white text-3xl bg-black bg-opacity-50 px-4 py-2 rounded-lg">
+                        A love story written in time
+                    </p>
+                </div>
+                <div class="swiper-slide relative">
+                    <img src="/images/image5.png" alt="Romantic wedding moment" class="w-full h-full object-cover">
+                    <p class="absolute bottom-5 left-5 text-white text-3xl bg-black bg-opacity-50 px-4 py-2 rounded-lg">
+                        Cherishing every special moment
+                    </p>
+                </div>
+            </div>
+            <div class="swiper-button-next text-white"></div>
+            <div class="swiper-button-prev text-white"></div>
+            <div class="swiper-pagination"></div>
+        </div>
+    </section>
 
-<!-- Top Rated WeddingPal Section -->
-<section id="ratings" class="text-center py-8">
-    <h2 class="text-5xl text-yellow-600">Top rated WeddingPal</h2>
-    <section class="bg-yellow-100 py-8 flex justify-center">
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-5xl">
-            <div class="bg-white shadow-lg rounded-xl p-6 text-center">
-                <img src="images/image ow1.png" alt="John Smith" class="w-16 h-16 rounded-full mx-auto">
-                <h3 class="mt-2 text-gray-800">John Smith</h3>
-                <p class="text-gray-500 text-sm">Google</p>
-                <div class="flex justify-center mt-1">☆</div>
-                <h4 class="mt-2 text-lg text-gray-800">Amazing Template</h4>
-                <p class="text-gray-600 text-sm mt-1">
-                    Clean and commented code, beautiful design, and really not hard to work with.
+    <!-- Planning Section -->
+    <section id="about" class="bg-red-800 text-white text-center py-8">
+        <h2 class="text-5xl text-yellow-600">Planning a dream wedding?</h2>
+        <p class="mt-4 leading-relaxed text-2xl">
+            Planning a dream wedding is an exhilarating journey that transforms a couple’s love story into a breathtaking reality.
+            From choosing the perfect venue that sets the stage for romance to designing exquisite décor that reflects their unique style,
+            every detail contributes to an unforgettable experience. A carefully curated menu, seamless entertainment, and meticulous
+            coordination ensure that the celebration flows effortlessly, allowing the couple and their loved ones to fully immerse
+            themselves in the joy of the occasion. Thoughtful planning eliminates stress, ensuring that every magical moment is cherished.
+            With a clear vision, expert guidance, and heartfelt personal touches, a dream wedding is more than just an event—it becomes
+            a timeless celebration of love, happiness, and the start of a beautiful new journey together.
+        </p>
+        <button id="start-planning" class="bg-yellow-600 text-white py-2 px-4 rounded mt-4">Start Planning Now</button>
+    </section>
+
+    <!-- Top Rated WeddingPal Section -->
+    <section id="ratings" class="text-center py-8">
+        <h2 class="text-5xl text-yellow-600">Top rated WeddingPal</h2>
+        <section class="bg-yellow-100 py-8 flex justify-center">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-5xl">
+                <div class="bg-white shadow-lg rounded-xl p-6 text-center">
+                    <img src="/images/image_ow1.png" alt="John Smith" class="w-16 h-16 rounded-full mx-auto">
+                    <h3 class="mt-2 text-gray-800">John Smith</h3>
+                    <p class="text-gray-500 text-sm">Google</p>
+                    <div class="flex justify-center mt-1">⭐⭐⭐⭐⭐</div>
+                    <h4 class="mt-2 text-lg text-gray-800">Amazing Template</h4>
+                    <p class="text-gray-600 text-sm mt-1">
+                        Clean and commented code, beautiful design, and really not hard to work with.
+                    </p>
+                </div>
+                <div class="bg-white shadow-lg rounded-xl p-6 text-center">
+                    <img src="/images/image_ow2.png" alt="Amed Alzahabi" class="w-16 h-16 rounded-full mx-auto">
+                    <h3 class="mt-2 text-gray-800">Amed Alzahabi</h3>
+                    <p class="text-gray-500 text-sm">Facebook</p>
+                    <div class="flex justify-center mt-1">⭐⭐⭐⭐⭐</div>
+                    <h4 class="mt-2 text-lg text-gray-800">Excellent Service</h4>
+                    <p class="text-gray-600 text-sm mt-1">
+                        The WeddingPal was super helpful and made everything easy for us.
+                    </p>
+                </div>
+                <div class="bg-white shadow-lg rounded-xl p-6 text-center">
+                    <img src="/images/image_ow3.png" alt="Scott Anderson" class="w-16 h-16 rounded-full mx-auto">
+                    <h3 class="mt-2 text-gray-800">Scott Anderson</h3>
+                    <p class="text-gray-500 text-sm">Instagram</p>
+                    <div class="flex justify-center mt-1">⭐⭐⭐⭐⭐</div>
+                    <h4 class="mt-2 text-lg text-gray-800">Highly Recommend</h4>
+                    <p class="text-gray-600 text-sm mt-1">
+                        Attention to detail was amazing, and our day was truly special.
+                    </p>
+                </div>
+            </div>
+        </section>
+    </section>
+
+    <!-- Experience Section -->
+    <section id="venues" class="bg-red-800">
+        <section class="bg-white text-black text-center py-8">
+            <h2 class="text-5xl text-yellow-600">Experience lifetime with us</h2>
+            <div class="flex flex-col md:flex-row items-center justify-center mt-4 px-6">
+                <div class="md:w-1/2">
+                    <img src="/images/image7.png" alt="Bride and groom uder a floral arch" class="w-full rounded-lg">
+                </div>
+                <div class="md:w-1/2 md:pl-8 text-left">
+                    <p class="mt-4 text-2xl text-black-800">
+                        The bride of the week left us stunned by donning one of the most gorgeous and extravagant lehenga on her wedding day. Check it out! Bride and groom, wedding portrait, mandap, floral decor, gypsos, lotus blooms, banana leaves, Indian wedding, Tamil Brahmin rituals, wedding day, traditional wedding, elegant couple, South Indian wedding.
+                    </p>
+                </div>
+            </div>
+        </section>
+    </section>
+
+    <!-- What We Provide Section -->
+    <section class="bg-red-800 text-white text-center py-8">
+        <h2 class="text-5xl text-yellow-600">What WeddingPal provides</h2>
+        <div class="flex justify-center space-x-4 mt-4">
+            <div onclick="showVenue('sangeet')" class="cursor-pointer">
+                <img src="/images/image8.png" alt="Sangeet ceremony" class="mx-auto w-32 h-32 object-cover rounded">
+                <p class="mt-2">SANGEET</p>
+            </div>
+            <div onclick="showVenue('mehendi')" class="cursor-pointer">
+                <img src="/images/image9.png" alt="Mehendi ceremony" class="mx-auto w-32 h-32 object-cover rounded">
+                <p class="mt-2">MEHENDI</p>
+            </div>
+            <div onclick="showVenue('reception')" class="cursor-pointer">
+                <img src="/images/image10.png" alt="Reception ceremony" class="mx-auto w-32 h-32 object-cover rounded">
+                <p class="mt-2">RECEPTION</p>
+            </div>
+            <div onclick="showVenue('ceremony')" class="cursor-pointer">
+                <img src="/images/image11.png" alt="Wedding ceremony" class="mx-auto w-32 h-32 object-cover rounded">
+                <p class="mt-2">CEREMONY</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Venue Designs Section (Initially Hidden) -->
+    <section id="venue-section" class="hidden bg-gray-100 text-center py-8">
+        <h2 class="text-5xl text-yellow-600">Venue Designs</h2>
+        <div id="venue-details" class="text-lg text-gray-700 mt-4 px-6"></div>
+        <div id="venue-images" class="flex flex-wrap justify-center gap-6 mt-4 px-4"></div>
+    </section>
+
+    <!-- Our Promise Section -->
+    <section class="text-center py-8 bg-gray-100">
+        <h2 class="text-5xl text-yellow-600">WeddingPal’s promise stays...</h2>
+        <div class="flex flex-col md:flex-row justify-center space-x-4 mt-4 px-4">
+            <div class="bg-white shadow-lg p-6 max-w-sm text-center rounded-lg">
+                <img src="/images/image13.png" alt="Couple smiling" class="mx-auto rounded-full w-24 h-24">
+                <p class="mt-2 text-gray-900">Aarav and Priya</p>
+                <p class="text-gray-800 text-sm mt-2 leading-relaxed">
+                    We were amazed by the seamless coordination, from the initial planning stages to the final moments of their big day.
                 </p>
             </div>
-            <div class="bg-white shadow-lg rounded-xl p-6 text-center">
-                <img src="images/image ow2.png" alt="Amed Alzahabi" class="w-16 h-16 rounded-full mx-auto">
-                <h3 class="mt-2 text-gray-800">Amed Alzahabi</h3>
-                <p class="text-gray-500 text-sm">Facebook</p>
-                <div class="flex justify-center mt-1"></div>
-                <h4 class="mt-2 text-lg text-gray-800">Excellent Service</h4>
-                <p class="text-gray-600 text-sm mt-1">
-                    The WeddingPal was super helpful and made everything easy for us.
+            <div class="bg-white shadow-lg p-6 max-w-sm text-center rounded-lg">
+                <img src="/images/image14.png" alt="Couple smiling" class="mx-auto rounded-full w-24 h-24">
+                <p class="mt-2 text-gray-900">Rohan and Anaya</p>
+                <p class="text-gray-800 text-sm mt-2 leading-relaxed">
+                    We were absolutely thrilled with the exceptional professionalism and flawless organization throughout their wedding planning journey.
                 </p>
             </div>
-            <div class="bg-white shadow-lg rounded-xl p-6 text-center">
-                <img src="images/image ow3.png" alt="Scott Anderson" class="w-16 h-16 rounded-full mx-auto">
-                <h3 class="mt-2 text-gray-800">Scott Anderson</h3>
-                <p class="text-gray-500 text-sm">Instagram</p>
-                <div class="flex justify-center mt-1">☆</div>
-                <h4 class="mt-2 text-lg text-gray-800">Highly Recommend</h4>
-                <p class="text-gray-600 text-sm mt-1">
-                    Attention to detail was amazing, and our day was truly special.
+            <div class="bg-white shadow-lg p-6 max-w-sm text-center rounded-lg">
+                <img src="/images/image15.png" alt="Couple smiling" class="mx-auto rounded-full w-24 h-24">
+                <p class="mt-2 text-gray-900">Kabir and Meera</p>
+                <p class="text-gray-800 text-sm mt-2 leading-relaxed">
+                    We were overjoyed to see their dream wedding come to life with absolute ease. Every element was executed with precision.
                 </p>
             </div>
         </div>
     </section>
-</section>
 
-<!-- Experience Section -->
-<section id="venues" class="bg-red-800">
-    <section class="bg-white text-black text-center py-8">
-        <h2 class="text-5xl text-yellow-600">Experience lifetime with us</h2>
-        <div class="flex flex-col md:flex-row items-center justify-center mt-4 px-6">
-            <div class="md:w-1/2">
-                <img src="images/image 7.png" alt="Bride and groom under a floral arch" class="w-full rounded-lg">
-            </div>
-            <div class="md:w-1/2 md:pl-8 text-left">
-                <p class="mt-4 text-5xl text-black-800">
-                    The bride of the week left us stunned by donning one of the most gorgeous and extravagant lehenga on her wedding day. Check it out! Bride and groom, wedding portrait, mandap, floral decor, gypsos, lotus blooms, banana leaves, Indian wedding, Tamil Brahmin rituals, wedding day, traditional wedding, elegant couple, South Indian wedding.
-                </p>
-            </div>
+    <!-- Blog Section -->
+    <section class="bg-red-800 text-white text-center py-8">
+        <h2 class="text-5xl text-yellow-600">WeddingPal’s Social Media Posts</h2>
+        <div class="flex justify-between items-center mt-4 px-8">
+            <a href="#" class="text-white hover:text-yellow-400">« OLDER POSTS</a>
+            <a href="#" class="text-white hover:text-yellow-400">NEWER POST »</a>
+        </div>
+        <div class="flex overflow-x-auto whitespace-nowrap mt-6 space-x-4 px-4">
+            <img src="/images/image4.png" alt="Wedding decor" class="w-32 h-32 object-cover rounded-lg shadow-lg">
+            <img src="/images/image5.png" alt="Bride and groom" class="w-32 h-32 object-cover rounded-lg shadow-lg">
+            <img src="/images/image7.png" alt="Bride in wedding dress" class="w-32 h-32 object-cover rounded-lg shadow-lg">
+            <img src="/images/image6.png" alt="Wedding decor" class="w-32 h-32 object-cover rounded-lg shadow-lg">
+            <img src="/images/image8.png" alt="Bride and groom" class="w-32 h-32 object-cover rounded-lg shadow-lg">
+            <img src="/images/image9.png" alt="Bride in wedding dress" class="w-32 h-32 object-cover rounded-lg shadow-lg">
+            <img src="/images/image15.png" alt="Wedding decor" class="w-32 h-32 object-cover rounded-lg shadow-lg">
+            <img src="/images/image13.png" alt="Bride and groom" class="w-32 h-32 object-cover rounded-lg shadow-lg">
+            <img src="/images/image14.png" alt="Bride in wedding dress" class="w-32 h-32 object-cover rounded-lg shadow-lg">
+            <img src="/images/image8.png" alt="Bride and groom" class="w-32 h-32 object-cover rounded-lg shadow-lg">
+            <img src="/images/image17.png" alt="Bride in wedding dress" class="w-32 h-32 object-cover rounded-lg shadow-lg">
         </div>
     </section>
-</section>
 
-<!-- What We Provide Section -->
-<section class="bg-red-800 text-white text-center py-8">
-    <h2 class="text-5xl text-yellow-600">What WeddingPal provides</h2>
-    <div class="flex justify-center space-x-4 mt-4">
-        <div onclick="showVenue('sangeet')" class="cursor-pointer">
-            <img src="images/image 8.png" alt="Sangeet ceremony" class="mx-auto">
-            <p class="mt-2">SANGEET</p>
-        </div>
-        <div onclick="showVenue('mehendi')" class="cursor-pointer">
-            <img src="images/image 9.png" alt="Mehendi ceremony" class="mx-auto">
-            <p class="mt-2">MEHENDI</p>
-        </div>
-        <div onclick="showVenue('reception')" class="cursor-pointer">
-            <img src="images/image 10.png" alt="Reception ceremony" class="mx-auto">
-            <p class="mt-2">RECEPTION</p>
-        </div>
-        <div onclick="showVenue('ceremony')" class="cursor-pointer">
-            <img src="images/image 11.png" alt="Wedding ceremony" class="mx-auto">
-            <p class="mt-2">CEREMONY</p>
-        </div>
-    </div>
-</section>
-
-<!-- Venue Designs Section (Initially Hidden) -->
-<section id="venue-section" class="hidden bg-gray-100 text-center py-8">
-    <h2 class="text-5xl text-yellow-600">Venue Designs</h2>
-    <div id="venue-details" class="text-lg text-gray-700 mt-4 px-6"></div>
-    <div id="venue-images" class="flex flex-wrap justify-center gap-6 mt-4 px-4"></div>
-</section>
-
-<!-- Our Promise Section -->
-<section class="text-center py-8 bg-gray-100">
-    <h2 class="text-5xl text-yellow-600">WeddingPal’s promise stays...</h2>
-    <div class="flex flex-col md:flex-row justify-center space-x-4 mt-4 px-4">
-        <div class="bg-white shadow-lg p-6 max-w-sm text-center rounded-lg">
-            <img src="images/image 13.png" alt="Couple smiling" class="mx-auto rounded-full w-24 h-24">
-            <p class="mt-2 text-gray-900">Aarav and Priya</p>
-            <p class="text-gray-800 text-sm mt-2 leading-relaxed">
-                We were amazed by the seamless coordination, from the initial planning stages to the final moments of their big day.
-            </p>
-        </div>
-        <div class="bg-white shadow-lg p-6 max-w-sm text-center rounded-lg">
-            <img src="images/image 14.png" alt="Couple smiling" class="mx-auto rounded-full w-24 h-24">
-            <p class="mt-2 text-gray-900">Rohan and Anaya</p>
-            <p class="text-gray-800 text-sm mt-2 leading-relaxed">
-                We were absolutely thrilled with the exceptional professionalism and flawless organization throughout their wedding planning journey.
-            </p>
-        </div>
-        <div class="bg-white shadow-lg p-6 max-w-sm text-center rounded-lg">
-            <img src="images/image 15.png" alt="Couple smiling" class="mx-auto rounded-full w-24 h-24">
-            <p class="mt-2 text-gray-900">Kabir and Meera</p>
-            <p class="text-gray-800 text-sm mt-2 leading-relaxed">
-                We were overjoyed to see their dream wedding come to life with absolute ease. Every element was executed with precision.
-            </p>
-        </div>
-    </div>
-</section>
-
-<!-- Blog Section -->
-<section class="bg-red-800 text-white text-center py-8">
-    <h2 class="text-5xl text-yellow-600">WeddingPal’s Social Media Posts</h2>
-    <div class="flex justify-between items-center mt-4 px-8">
-        <a href="#" class="text-white hover:text-yellow-400">« OLDER POSTS</a>
-        <a href="#" class="text-white hover:text-yellow-400">NEWER POST »</a>
-    </div>
-    <div class="flex overflow-x-auto whitespace-nowrap mt-6 space-x-4 px-4">
-        <img src="images/image 4.png" alt="Wedding decor" class="w-32 h-32 object-cover rounded-lg shadow-lg">
-        <img src="images/image 5.png" alt="Bride and groom" class="w-32 h-32 object-cover rounded-lg shadow-lg">
-        <img src="images/image 7.png" alt="Bride in wedding dress" class="w-32 h-32 object-cover rounded-lg shadow-lg">
-        <img src="images/image 6.png" alt="Wedding decor" class="w-32 h-32 object-cover rounded-lg shadow-lg">
-        <img src="images/image 8.png" alt="Bride and groom" class="w-32 h-32 object-cover rounded-lg shadow-lg">
-        <img src="images/image 9.png" alt="Bride in wedding dress" class="w-32 h-32 object-cover rounded-lg shadow-lg">
-        <img src="images/image 15.png" alt="Wedding decor" class="w-32 h-32 object-cover rounded-lg shadow-lg">
-        <img src="images/image 13.png" alt="Bride and groom" class="w-32 h-32 object-cover rounded-lg shadow-lg">
-        <img src="images/image 14.png" alt="Bride in wedding dress" class="w-32 h-32 object-cover rounded-lg shadow-lg">
-        <img src="images/image 8.png" alt="Bride and groom" class="w-32 h-32 object-cover rounded-lg shadow-lg">
-        <img src="images/image 17.png" alt="Bride in wedding dress" class="w-32 h-32 object-cover rounded-lg shadow-lg">
-    </div>
-</section>
-
-<!-- Registration Section -->
-<section id="registration" class="relative text-white py-8" style="background-image: url('images/image 17.png'); background-size: cover;">
-    <div class="absolute inset-0 bg-black opacity-50"></div>
-    <div class="relative container mx-auto flex justify-between items-center px-6">
-        <div id="reg-form" class="bg-white text-black p-6 rounded-lg shadow-lg">
-            <h2 class="text-2xl mb-4">Join with WeddingPal to make the Dream Wedding</h2>
-            <form id="registration-form" onsubmit="handleRegistration(event)">
-                <div class="mb-4">
-                    <label for="aboutwed" class="block">About Wedding</label>
-                    <input type="text" id="aboutwed" name="aboutwed" class="w-full p-2 border border-gray-300 rounded" required>
-                </div>
-                <div class="mb-4">
-                    <label for="name" class="block">Name</label>
-                    <input type="text" id="name" name="name" class="w-full p-2 border border-gray-300 rounded" required>
-                </div>
-                <div class="mb-4">
-                    <label for="email" class="block">Email ID</label>
-                    <input type="email" id="email" name="email" class="w-full p-2 border border-gray-300 rounded" required>
-                </div>
-                <div class="mb-4">
-                    <label for="mobile" class="block">Mobile Number</label>
-                    <input type="text" id="mobile" name="mobile" class="w-full p-2 border border-gray-300 rounded" required>
-                </div>
-                <div class="mb-4">
-                    <label for="environment" class="block">Environment</label>
-                    <div class="flex items-center space-x-4">
-                        <label><input type="radio" name="location" value="Indoor" required> Indoor</label>
-                        <label><input type="radio" name="location" value="Outdoor"> Outdoor</label>
-                        <label><input type="radio" name="location" value="Both"> Both</label>
+    <!-- Registration Section -->
+    <section id="registration" class="relative text-white py-8" style="background-image: url('/images/image17.png'); background-size: cover;">
+        <div class="absolute inset-0 bg-black opacity-50"></div>
+        <div class="relative container mx-auto flex justify-between items-center px-6">
+            <div id="reg-form" class="bg-white text-black p-6 rounded-lg shadow-lg">
+                <h2 class="text-2xl mb-4">Join with WeddingPal to make the Dream Wedding</h2>
+                <form id="registration-form">
+                    <div class="mb-4">
+                        <label for="aboutwed" class="block">About Wedding</label>
+                        <input type="text" id="aboutwed" name="aboutwed" class="w-full p-2 border border-gray-300 rounded" required>
                     </div>
-                </div>
-                <button type="submit" class="bg-red-800 text-white py-2 px-4 rounded">REGISTER</button>
+                    <div class="mb-4">
+                        <label for="name" class="block">Name</label>
+                        <input type="text" id="name" name="name" class="w-full p-2 border border-gray-300 rounded" required>
+                    </div>
+                    <div class="mb-4">
+                        <label for="email" class="block">Email ID</label>
+                        <input type="email" id="email" name="email" class="w-full p-2 border border-gray-300 rounded" required>
+                    </div>
+                    <div class="mb-4">
+                        <label for="mobile" class="block">Mobile Number</label>
+                        <input type="tel" id="mobile" name="mobile" pattern="[0-9]{10}" class="w-full p-2 border border-gray-300 rounded" required>
+                    </div>
+                    <div class="mb-4">
+                        <label for="environment" class="block">Environment</label>
+                        <div class="flex items-center space-x-4">
+                            <label><input type="radio" name="location" value="Indoor" required> Indoor</label>
+                            <label><input type="radio" name="location" value="Outdoor"> Outdoor</label>
+                            <label><input type="radio" name="location" value="Both"> Both</label>
+                        </div>
+                    </div>
+                    <button type="submit" id="register-button" class="bg-red-800 text-white py-2 px-4 rounded">REGISTER</button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- Registration Response -->
+    <div id="registration-response" class="hidden bg-red-800 text-white p-6">
+        <h2 class="text-2xl text-yellow-600 mb-4">Next Steps with WeddingPal</h2>
+        <button id="call-button" class="bg-yellow-600 text-white py-2 px-4 rounded mb-4">Call Me Now</button>
+        <div>
+            <h3 class="text-xl text-yellow-600">Schedule a Meeting</h3>
+            <form id="schedule-form" class="mt-2">
+                <select name="type" required class="w-full p-2 mb-2 rounded bg-white text-black">
+                    <option value="" disabled selected>Select Meeting Type</option>
+                    <option value="online">Online</option>
+                    <option value="offline">In-Person</option>
+                </select>
+                <select name="day" required class="w-full p-2 mb-2 rounded bg-white text-black">
+                    <option value="" disabled selected>Day</option>
+                    <option value="Monday">Monday</option>
+                    <option value="Tuesday">Tuesday</option>
+                    <option value="Wednesday">Wednesday</option>
+                    <option value="Thursday">Thursday</option>
+                    <option value="Friday">Friday</option>
+                    <option value="Saturday">Saturday</option>
+                    <option value="Sunday">Sunday</option>
+                </select>
+                <select name="time" required class="w-full p-2 mb-2 rounded bg-white text-black">
+                    <option value="" disabled selected>Time</option>
+                    <option value="9:00 AM">9:00 AM</option>
+                    <option value="11:00 AM">11:00 AM</option>
+                    <option value="1:00 PM">1:00 PM</option>
+                    <option value="3:00 PM">3:00 PM</option>
+                    <option value="5:00 PM">5:00 PM</option>
+                </select>
+                <select name="month" required class="w-full p-2 mb-2 rounded bg-white text-black">
+                    <option value="" disabled selected>Month</option>
+                    <option value="January">January</option>
+                    <option value="February">February</option>
+                    <option value="March">March</option>
+                    <option value="April">April</option>
+                    <option value="May">May</option>
+                    <option value="June">June</option>
+                    <option value="July">July</option>
+                    <option value="August">August</option>
+                    <option value="September">September</option>
+                    <option value="October">October</option>
+                    <option value="November">November</option>
+                    <option value="December">December</option>
+                </select>
+                <button type="submit" id="schedule-button" class="bg-yellow-600 text-white py-2 px-4 rounded">Schedule Meeting</button>
             </form>
         </div>
+        <div id="meeting-response" class="mt-4 text-yellow-600"></div>
+        <div class="mt-4">
+            <h3 class="text-xl text-yellow-600">Send WeddingPal a Message</h3>
+            <form id="text-form" class="mt-2">
+                <textarea name="message" placeholder="Type your message..." required class="w-full p-2 rounded bg-white text-black"></textarea>
+                <button type="submit" id="message-button" class="bg-yellow-600 text-white py-2 px-4 rounded mt-2">Send Message</button>
+            </form>
+            <div id="text-response" class="mt-4 text-yellow-600"></div>
+        </div>
+        <button id="close-response" class="bg-gray-600 text-white py-2 px-4 rounded mt-4">Back to Website</button>
     </div>
-</section>
 
-<!-- Registration Response -->
-<div id="registration-response" class="hidden bg-red-800 text-white p-6">
-    <h2 class="text-2xl text-yellow-600 mb-4">Next Steps with WeddingPal</h2>
-    <button onclick="makeCall()" class="bg-yellow-600 text-white py-2 px-4 rounded mb-4">Call Me Now</button>
-    <div>
-        <h3 class="text-xl text-yellow-600">Schedule a Meeting</h3>
-        <form id="schedule-form" onsubmit="scheduleMeeting(event)" class="mt-2">
-            <select name="type" required class="w-full p-2 mb-2 rounded bg-white text-black">
-                <option value="" disabled selected>Select Meeting Type</option>
-                <option value="online">Online</option>
-                <option value="offline">In-Person</option>
-            </select>
-            <select name="day" required class="w-full p-2 mb-2 rounded bg-white text-black">
-                <option value="" disabled selected>Day</option>
-                <option value="Monday">Monday</option>
-                <option value="Tuesday">Tuesday</option>
-                <option value="Wednesday">Wednesday</option>
-                <option value="Thursday">Thursday</option>
-                <option value="Friday">Friday</option>
-                <option value="Saturday">Saturday</option>
-                <option value="Sunday">Sunday</option>
-            </select>
-            <select name="time" required class="w-full p-2 mb-2 rounded bg-white text-black">
-                <option value="" disabled selected>Time</option>
-                <option value="9:00 AM">9:00 AM</option>
-                <option value="11:00 AM">11:00 AM</option>
-                <option value="1:00 PM">1:00 PM</option>
-                <option value="3:00 PM">3:00 PM</option>
-                <option value="5:00 PM">5:00 PM</option>
-            </select>
-            <select name="month" required class="w-full p-2 mb-2 rounded bg-white text-black">
-                <option value="" disabled selected>Month</option>
-                <option value="January">January</option>
-                <option value="February">February</option>
-                <option value="March">March</option>
-                <option value="April">April</option>
-                <option value="May">May</option>
-                <option value="June">June</option>
-                <option value="July">July</option>
-                <option value="August">August</option>
-                <option value="September">September</option>
-                <option value="October">October</option>
-                <option value="November">November</option>
-                <option value="December">December</option>
-            </select>
-            <button type="submit" class="bg-yellow-600 text-white py-2 px-4 rounded">Schedule Meeting</button>
-        </form>
-    </div>
-    <div id="meeting-response" class="mt-4 text-yellow-600"></div>
-    <div class="mt-4">
-        <h3 class="text-xl text-yellow-600">Send WeddingPal a Message</h3>
-        <form id="text-form" onsubmit="sendText(event)" class="mt-2">
-            <textarea name="message" placeholder="Type your message..." required class="w-full p-2 rounded bg-white text-black"></textarea>
-            <button type="submit" class="bg-yellow-600 text-white py-2 px-4 rounded mt-2">Send Message</button>
-        </form>
-        <div id="text-response" class="mt-4 text-yellow-600"></div>
-    </div>
-    <button onclick="closeResponse()" class="bg-gray-600 text-white py-2 px-4 rounded mt-4">Back to Website</button>
-</div>
-
-<!-- FAQ Section -->
-<section id="faq" class="bg-red-800 text-white text-center py-8">
-    <h2 class="text-5xl text-yellow-600">WeddingPal FAQ</h2>
-    <div class="mt-4 px-4 flex justify-center">
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-4xl w-full">
-            <div class="bg-white shadow-lg p-6 text-center rounded-lg">
-                <h3 class="text-2xl text-gray-900">How do I book a WeddingPal planner?</h3>
-                <p class="text-gray-800 text-sm mt-2 leading-relaxed">
-                    You can book a WeddingPal planner by scheduling a call, sending a text message, or scheduling an in-person meeting through our booking system.
-                </p>
-            </div>
-            <div class="bg-white shadow-lg p-6 text-center rounded-lg">
-                <h3 class="text-2xl text-gray-900">What is the advance fee for booking?</h3>
-                <p class="text-gray-800 text-sm mt-2 leading-relaxed">
-                    The advance fee for booking our WeddingPal planner is [Amount]. You can pay the advance fee through our payment integration system.
-                </p>
-            </div>
-            <div class="bg-white shadow-lg p-6 text-center rounded-lg">
-                <h3 class="text-2xl text-gray-900">How do I cancel my booking?</h3>
-                <p class="text-gray-800 text-sm mt-2 leading-relaxed">
-                    You can cancel your booking by contacting our WeddingPal customer care team or using the cancellation option in our booking system.
-                </p>
-            </div>
-            <div class="bg-white shadow-lg p-6 text-center rounded-lg">
-                <h3 class="text-2xl text-gray-900">How can I add a question to the FAQ?</h3>
-                <p class="text-gray-800 text-sm mt-2 leading-relaxed">
-                    You can add a question to the WeddingPal FAQ by submitting it through our contact form or by reaching out to our customer care team.
-                </p>
+    <!-- FAQ Section -->
+    <section id="faq" class="bg-red-800 text-white text-center py-8">
+        <h2 class="text-5xl text-yellow-600">WeddingPal FAQ</h2>
+        <div class="mt-4 px-4 flex justify-center">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-4xl w-full">
+                <div class="bg-white shadow-lg p-6 text-center rounded-lg">
+                    <h3 class="text-2xl text-gray-900">How do I book a WeddingPal planner?</h3>
+                    <p class="text-gray-800 text-sm mt-2 leading-relaxed">
+                        You can book a WeddingPal planner by scheduling a call, sending a text message, or scheduling an in-person meeting through our booking system.
+                    </p>
+                </div>
+                <div class="bg-white shadow-lg p-6 text-center rounded-lg">
+                    <h3 class="text-2xl text-gray-900">What is the advance fee for booking?</h3>
+                    <p class="text-gray-800 text-sm mt-2 leading-relaxed">
+                        The advance fee for booking our WeddingPal planner is $500. You can pay the advance fee through our payment integration system.
+                    </p>
+                </div>
+                <div class="bg-white shadow-lg p-6 text-center rounded-lg">
+                    <h3 class="text-2xl text-gray-900">How do I cancel my booking?</h3>
+                    <p class="text-gray-800 text-sm mt-2 leading-relaxed">
+                        You can cancel your booking by contacting our WeddingPal customer care team or using the cancellation option in our booking system.
+                    </p>
+                </div>
+                <div class="bg-white shadow-lg p-6 text-center rounded-lg">
+                    <h3 class="text-2xl text-gray-900">How can I add a question to the FAQ?</h3>
+                    <p class="text-gray-800 text-sm mt-2 leading-relaxed">
+                        You can add a question to the WeddingPal FAQ by submitting it through our contact form or by reaching out to our customer care team.
+                    </p>
+                </div>
             </div>
         </div>
-    </div>
-    <div class="mt-6 flex flex-col items-center">
-        <form id="faq-form" onsubmit="submitFAQ(event)" class="w-full max-w-sm">
-            <textarea id="new-question" name="question" placeholder="Ask a new question..." class="px-4 py-2 rounded-md text-black focus:outline-none w-full mt-4" required></textarea>
-            <button type="submit" class="bg-yellow-600 text-white py-2 px-4 rounded mt-4">Submit Question</button>
-        </form>
-        <div id="faq-response" class="mt-4 text-yellow-600"></div>
-    </div>
-</section>
-
-<!-- Feedback Section -->
-<section id="feedbacks" class="bg-red-800 text-white text-center py-8">
-    <h2 class="text-5xl text-yellow-600">WeddingPal Feedbacks</h2>
-    <div class="mt-6 flex flex-col items-center">
-        <form id="feedback-form" onsubmit="submitFeedback(event)" class="w-full max-w-sm">
-            <input type="text" id="feedback-name" name="name" placeholder="Your Name" class="px-4 py-2 rounded-md text-black focus:outline-none w-full mt-4" required>
-            <input type="email" id="feedback-email" name="email" placeholder="Your Email" class="px-4 py-2 rounded-md text-black focus:outline-none w-full mt-4" required>
-            <textarea id="feedback-text" name="feedback" placeholder="Your Feedback..." class="px-4 py-2 rounded-md text-black focus:outline-none w-full mt-4" required></textarea>
-            <button type="submit" class="bg-yellow-600 text-white py-2 px-4 rounded mt-4">Submit Feedback</button>
-        </form>
-        <div id="feedback-response" class="mt-4 text-yellow-600"></div>
-    </div>
-    <div id="feedback-list" class="mt-6 max-w-4xl mx-auto"></div>
-</section>
-
-<!-- Footer -->
-<footer id="footer" class="bg-white text-black text-center py-8">
-    <div class="container mx-auto">
-        <div class="text-2xl script-font mb-4">WeddingPal</div>
-        <div class="mb-4">
-            <p>CONTACT WEDDINGPAL</p>
-            <p>weddingpal@gmail.com</p>
-            <p>9611707778</p>
+        <div class="mt-6 flex flex-col items-center">
+            <form id="faq-form" class="w-full max-w-sm">
+                <textarea id="new-question" name="question" placeholder="Ask a new question..." class="px-4 py-2 rounded-md text-black focus:outline-none w-full mt-4" required></textarea>
+                <button type="submit" id="faq-button" class="bg-yellow-600 text-white py-2 px-4 rounded mt-4">Submit Question</button>
+            </form>
+            <div id="faq-response" class="mt-4 text-yellow-600"></div>
         </div>
-        <div class="mb-4">SOCIALS</div>
-        <div class="share">
-            <a href="https://facebook.com/weddingpal" class="fab fa-facebook-f mx-2 text-gray-800">@weddingpal</a>
-            <a href="https://twitter.com/weddingpal" class="fab fa-twitter mx-2 text-gray-800">@weddingpal</a>
-            <a href="https://pinterest.com/weddingpal" class="fab fa-pinterest mx-2 text-gray-800">@weddingpal</a>
-            <a href="https://linkedin.com/company/weddingpal" class="fab fa-linkedin mx-2 text-gray-800">@weddingpal</a>
-            <a href="https://instagram.com/weddingpal" class="fab fa-instagram mx-2 text-gray-800">@weddingpal</a>
-        </div>
-    </div>
-</footer>
+    </section>
 
-<!-- Chatbot -->
-<div id="chatbot">
-    <button onclick="toggleChatbot()" class="bg-yellow-600 text-white p-4 rounded-full hover:bg-yellow-700 transition">
-        <i class="fas fa-robot text-xl"></i>
-    </button>
-</div>
-<div id="chatbot-window" class="hidden">
-    <div class="bg-red-800 text-white p-3 rounded-t-lg flex justify-between items-center">
-        <h3 class="text-lg">WeddingPal Assistant</h3>
-        <button onclick="toggleChatbot()" class="text-white hover:text-yellow-600">
-            <i class="fas fa-times"></i>
+    <!-- Feedback Section -->
+    <section id="feedbacks" class="bg-red-800 text-white text-center py-8">
+        <h2 class="text-5xl text-yellow-600">WeddingPal Feedbacks</h2>
+        <div class="mt-6 flex flex-col items-center">
+            <form id="feedback-form" class="w-full max-w-sm">
+                <input type="text" id="feedback-name" name="name" placeholder="Your Name" class="px-4 py-2 rounded-md text-black focus:outline-none w-full mt-4" required>
+                <input type="email" id="feedback-email" name="email" placeholder="Your Email" class="px-4 py-2 rounded-md text-black focus:outline-none w-full mt-4" required>
+                <textarea id="feedback-text" name="feedback" placeholder="Your Feedback..." class="px-4 py-2 rounded-md text-black focus:outline-none w-full mt-4" required></textarea>
+                <button type="submit" id="feedback-button" class="bg-yellow-600 text-white py-2 px-4 rounded mt-4">Submit Feedback</button>
+            </form>
+            <div id="feedback-response" class="mt-4 text-yellow-600"></div>
+        </div>
+        <div id="feedback-list" class="mt-6 max-w-4xl mx-auto"></div>
+    </section>
+
+    <!-- Footer -->
+    <footer id="footer" class="bg-white text-black text-center py-8">
+        <div class="container mx-auto">
+            <div class="text-2xl script-font mb-4">WeddingPal</div>
+            <div class="mb-4">
+                <p>CONTACT WEDDINGPAL</p>
+                <p>weddingpal@gmail.com</p>
+                <p>9611707778</p>
+            </div>
+            <div class="mb-4">SOCIALS</div>
+            <div class="share">
+                <a href="https://facebook.com/weddingpal" class="fab fa-facebook-f mx-2 text-gray-800" aria-label="Facebook">@weddingpal</a>
+                <a href="https://twitter.com/weddingpal" class="fab fa-twitter mx-2 text-gray-800" aria-label="Twitter">@weddingpal</a>
+                <a href="https://pinterest.com/weddingpal" class="fab fa-pinterest mx-2 text-gray-800" aria-label="Pinterest">@weddingpal</a>
+                <a href="https://linkedin.com/company/weddingpal" class="fab fa-linkedin mx-2 text-gray-800" aria-label="LinkedIn">@weddingpal</a>
+                <a href="https://instagram.com/weddingpal" class="fab fa-instagram mx-2 text-gray-800" aria-label="Instagram">@weddingpal</a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Chatbot -->
+    <div id="chatbot">
+        <button id="chatbot-toggle" class="bg-yellow-600 text-white p-4 rounded-full hover:bg-yellow-700 transition" aria-label="Toggle Chatbot">
+            <i class="fas fa-robot text-xl"></i>
         </button>
     </div>
-    <div id="chatbot-messages"></div>
-    <form id="chatbot-form" onsubmit="sendChatbotMessage(event)">
-        <div class="flex">
-            <input type="text" id="chatbot-input" name="message" placeholder="Ask about WeddingPal..." required>
-            <button type="submit" class="bg-yellow-600 text-white py-2 px-4 rounded-r-lg hover:bg-yellow-700 transition">Send</button>
+    <div id="chatbot-window" class="hidden">
+        <div class="bg-red-800 text-white p-3 rounded-t-lg flex justify-between items-center">
+慼            <h3 class="text-lg">WeddingPal Assistant</h3>
+            <button id="chatbot-close" class="text-white hover:text-yellow-600" aria-label="Close Chatbot">
+                <i class="fas fa-times"></i>
+            </button>
         </div>
-    </form>
-</div>
+        <div id="chatbot-messages"></div>
+        <form id="chatbot-form">
+            <div class="flex">
+                <input type="text" id="chatbot-input" name="message" placeholder="Ask about WeddingPal..." required aria-label="Chatbot input">
+                <button type="submit" id="chatbot-send" class="bg-yellow-600 text-white py-2 px-4 rounded-r-lg hover:bg-yellow-700 transition">Send</button>
+            </div>
+        </form>
+    </div>
 
-<!-- JavaScript -->
-<script>
-    // Navigation Helper
-    function navigateToSection(sectionId) {
-        console.log(`Navigating to ${sectionId}`);
-        const section = document.getElementById(sectionId);
-        section.scrollIntoView({ behavior: 'smooth' });
-    }
+    <!-- Supabase Client -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+        // Initialize Supabase client
+        const supabase = Supabase.createClient(
+            'YOUR_SUPABASE_URL',
+            'YOUR_SUPABASE_ANON_KEY'
+        );
 
-    // Smooth scrolling for nav links
-    document.querySelectorAll('.nav-link').forEach(anchor => {
-        anchor.addEventListener('click', function(e) {
-            e.preventDefault();
-            const section = document.querySelector(this.getAttribute('href'));
+        // API Base URL (replace with your Render backend URL)
+        const API_BASE_URL = 'https://your-app.onrender.com';
+
+        // Utility Functions
+        function showLoading(button) {
+            button.classList.add('loading');
+            button.disabled = true;
+        }
+
+        function hideLoading(button) {
+            button.classList.remove('loading');
+            button.disabled = false;
+        }
+
+        function navigateToSection(sectionId) {
+            const section = document.getElementById(sectionId);
             section.scrollIntoView({ behavior: 'smooth' });
-        });
-    });
+        }
 
-    // Search Functionality
-    function performGlobalSearch() {
-        console.log('Performing search');
-        const query = document.getElementById('global-search').value.toLowerCase();
-        const sections = document.querySelectorAll('section, footer');
-        let found = false;
-        sections.forEach(section => {
-            const text = section.textContent.toLowerCase();
-            if (text.includes(query)) {
+        // Initialize Swiper
+        document.addEventListener("DOMContentLoaded", function () {
+            new Swiper(".swiper-container", {
+                loop: true,
+                autoplay: { delay: 3000 },
+                navigation: { nextEl: ".swiper-button-next", prevEl: ".swiper-button-prev" },
+                pagination: { el: ".swiper-pagination", clickable: true },
+                effect: 'fade',
+                speed: 800
+            });
+            fetchFeedbacks();
+        });
+
+        // Smooth Scrolling for Nav Links
+        document.querySelectorAll('.nav-link').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                const section = document.querySelector(this.getAttribute('href'));
                 section.scrollIntoView({ behavior: 'smooth' });
-                found = true;
+            });
+        });
+
+        // Search Functionality
+        document.getElementById('search-button').addEventListener('click', async () => {
+            const query = document.getElementById('global-search').value.trim().toLowerCase();
+            if (!query) {
+                alert('Please enter a search term.');
+                return;
+            }
+            const sections = document.querySelectorAll('section, footer');
+            let found = false;
+            sections.forEach(section => {
+                const text = section.textContent.toLowerCase();
+                if (text.includes(query)) {
+                    section.scrollIntoView({ behavior: 'smooth' });
+                    found = true;
+                }
+            });
+            if (!found) alert('No results found.');
+        });
+
+        // Registration Handling
+        document.getElementById('registration-form').addEventListener('submit', async (event) => {
+            event.preventDefault();
+            const button = document.getElementById('register-button');
+            showLoading(button);
+            const formData = new FormData(event.target);
+            const data = Object.fromEntries(formData);
+            try {
+                const { error } = await supabase.from('registrations').insert([data]);
+                if (error) throw error;
+                document.getElementById('reg-form').classList.add('hidden');
+                document.getElementById('registration-response').classList.remove('hidden');
+            } catch (error) {
+                alert(`Registration failed: ${error.message}`);
+            } finally {
+                hideLoading(button);
             }
         });
-        if (!found) alert('No results found.');
-    }
 
-    // Registration Handling
-    function handleRegistration(event) {
-        event.preventDefault();
-        console.log('Handling registration');
-        const form = event.target;
-        const formData = new FormData(form);
-        const data = Object.fromEntries(formData);
-        console.log('Registration data:', data);
-        fetch('http://localhost:3000/register', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(data)
-        })
-        .then(async response => {
-            const text = await response.text();
-            console.log('Registration response:', { status: response.status, text });
-            if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}, Text: ${text}`);
-            return JSON.parse(text);
-        })
-        .then(data => {
-            document.getElementById('reg-form').classList.add('hidden');
-            document.getElementById('registration-response').classList.remove('hidden');
-        })
-        .catch(error => {
-            console.error('Registration error:', error);
-            alert(`Registration failed: ${error.message}`);
+        // Close Response Box
+        document.getElementById('close-response').addEventListener('click', () => {
+            document.getElementById('registration-response').classList.add('hidden');
+            document.getElementById('reg-form').classList.remove('hidden');
+            document.getElementById('registration-form').reset();
         });
-    }
 
-    // Close Response Box
-    function closeResponse() {
-        console.log('Closing response');
-        document.getElementById('registration-response').classList.add('hidden');
-        document.getElementById('reg-form').classList.remove('hidden');
-        document.getElementById('registration-form').reset();
-    }
-
-    // Call and Meeting Scheduling
-    function makeCall() {
-        console.log('Scheduling call');
-        fetch('http://localhost:3000/call', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' }
-        })
-        .then(async response => {
-            const text = await response.text();
-            console.log('Call response:', { status: response.status, text });
-            if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}, Text: ${text}`);
-            return JSON.parse(text);
-        })
-        .then(data => {
-            alert(data.message);
-        })
-        .catch(error => {
-            console.error('Call error:', error);
-            alert(`Failed to schedule call: ${error.message}`);
+        // Call Scheduling
+        document.getElementById('call-button').addEventListener('click', async () => {
+            const button = document.getElementById('call-button');
+            showLoading(button);
+            try {
+                const response = await fetch(`${API_BASE_URL}/call`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' }
+                });
+                const data = await response.json();
+                if (!response.ok) throw new Error(data.message);
+                alert(data.message);
+            } catch (error) {
+                alert(`Failed to schedule call: ${error.message}`);
+            } finally {
+                hideLoading(button);
+            }
         });
-    }
 
-    function scheduleMeeting(event) {
-        event.preventDefault();
-        console.log('Scheduling meeting');
-        const form = event.target;
-        const formData = new FormData(form);
-        const data = Object.fromEntries(formData);
-        console.log('Meeting data:', data);
-        fetch('http://localhost:3000/schedule', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(data)
-        })
-        .then(async response => {
-            const text = await response.text();
-            console.log('Meeting response:', { status: response.status, text });
-            if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}, Text: ${text}`);
-            return JSON.parse(text);
-        })
-        .then(data => {
-            document.getElementById('meeting-response').innerText = data.message;
-            form.reset();
-        })
-        .catch(error => {
-            console.error('Meeting error:', error);
-            alert(`Failed to schedule meeting: ${error.message}`);
+        // Meeting Scheduling
+        document.getElementById('schedule-form').addEventListener('submit', async (event) => {
+            event.preventDefault();
+            const button = document.getElementById('schedule-button');
+            showLoading(button);
+            const formData = new FormData(event.target);
+            const data = Object.fromEntries(formData);
+            try {
+                const { error } = await supabase.from('schedules').insert([data]);
+                if (error) throw error;
+                document.getElementById('meeting-response').innerText = 'Meeting scheduled successfully!';
+                event.target.reset();
+            } catch (error) {
+                alert(`Failed to schedule meeting: ${error.message}`);
+            } finally {
+                hideLoading(button);
+            }
         });
-    }
 
-    // Text Message Submission
-    function sendText(event) {
-        event.preventDefault();
-        console.log('Sending message');
-        const form = event.target;
-        const formData = new FormData(form);
-        const data = Object.fromEntries(formData);
-        console.log('Message data:', data);
-        fetch('http://localhost:3000/text', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(data)
-        })
-        .then(async response => {
-            const text = await response.text();
-            console.log('Message response:', { status: response.status, text });
-            if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}, Text: ${text}`);
-            return JSON.parse(text);
-        })
-        .then(data => {
-            document.getElementById('text-response').innerHTML = `${data.message}<br><span class="text-yellow-600">WeddingPal: Thanks for your message! We’ll get back to you soon.</span>`;
-            form.reset();
-        })
-        .catch(error => {
-            console.error('Message error:', error);
-            alert(`Failed to send message: ${error.message}`);
+        // Text Message Submission
+        document.getElementById('text-form').addEventListener('submit', async (event) => {
+            event.preventDefault();
+            const button = document.getElementById('message-button');
+            showLoading(button);
+            const formData = new FormData(event.target);
+            const data = Object.fromEntries(formData);
+            try {
+                const { error } = await supabase.from('messages').insert([data]);
+                if (error) throw error;
+                document.getElementById('text-response').innerHTML = 'Message sent successfully!<br><span class="text-yellow-600">WeddingPal: Thanks for your message! We’ll get back to you soon.</span>';
+                event.target.reset();
+            } catch (error) {
+                alert(`Failed to send message: ${error.message}`);
+            } finally {
+                hideLoading(button);
+            }
         });
-    }
 
-    // FAQ Submission
-    function submitFAQ(event) {
-        event.preventDefault();
-        console.log('Submitting FAQ');
-        const form = event.target;
-        const formData = new FormData(form);
-        const data = Object.fromEntries(formData);
-        console.log('FAQ data:', data);
-        fetch('http://localhost:3000/faq', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(data)
-        })
-        .then(async response => {
-            const text = await response.text();
-            console.log('FAQ response:', { status: response.status, text });
-            if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}, Text: ${text}`);
-            return JSON.parse(text);
-        })
-        .then(data => {
-            document.getElementById('faq-response').innerText = 'Question submitted successfully!';
-            form.reset();
-        })
-        .catch(error => {
-            console.error('FAQ error:', error);
-            alert(`Failed to submit FAQ: ${error.message}`);
+        // FAQ Submission
+        document.getElementById('faq-form').addEventListener('submit', async (event) => {
+            event.preventDefault();
+            const button = document.getElementById('faq-button');
+            showLoading(button);
+            const formData = new FormData(event.target);
+            const data = Object.fromEntries(formData);
+            try {
+                const { error } = await supabase.from('faqs').insert([data]);
+                if (error) throw error;
+                document.getElementById('faq-response').innerText = 'Question submitted successfully!';
+                event.target.reset();
+            } catch (error) {
+                alert(`Failed to submit FAQ: ${error.message}`);
+            } finally {
+                hideLoading(button);
+            }
         });
-    }
 
-    // Feedback Submission
-    function submitFeedback(event) {
-        event.preventDefault();
-        console.log('Submitting feedback');
-        const form = event.target;
-        const formData = new FormData(form);
-        const data = Object.fromEntries(formData);
-        console.log('Feedback data:', data);
-        fetch('http://localhost:3000/feedback', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(data)
-        })
-        .then(async response => {
-            const text = await response.text();
-            console.log('Feedback response:', { status: response.status, text });
-            if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}, Text: ${text}`);
-            return JSON.parse(text);
-        })
-        .then(data => {
-            document.getElementById('feedback-response').innerText = 'Feedback submitted successfully!';
-            form.reset();
-            fetchFeedbacks();
-        })
-        .catch(error => {
-            console.error('Feedback error:', error);
-            alert(`Failed to submit feedback: ${error.message}`);
+        // Feedback Submission
+        document.getElementById('feedback-form').addEventListener('submit', async (event) => {
+            event.preventDefault();
+            const button = document.getElementById('feedback-button');
+            showLoading(button);
+            const formData = new FormData(event.target);
+            const data = Object.fromEntries(formData);
+            try {
+                const { error } = await supabase.from('feedbacks').insert([data]);
+                if (error) throw error;
+                document.getElementById('feedback-response').innerText = 'Feedback submitted successfully!';
+                event.target.reset();
+                fetchFeedbacks();
+            } catch (error) {
+                alert(`Failed to submit feedback: ${error.message}`);
+            } finally {
+                hideLoading(button);
+            }
         });
-    }
 
-    // Fetch and Display Feedbacks
-    function fetchFeedbacks() {
-        console.log('Fetching feedbacks');
-        fetch('http://localhost:3000/feedbacks')
-            .then(async response => {
-                const text = await response.text();
-                console.log('Feedbacks response:', { status: response.status, text });
-                if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}, Text: ${text}`);
-                return JSON.parse(text);
-            })
-            .then(feedbacks => {
+        // Fetch and Display Feedbacks
+        async function fetchFeedbacks() {
+            try {
+                const { data: feedbacks, error } = await supabase.from('feedbacks').select('*').order('created_at', { ascending: false });
+                if (error) throw error;
                 const feedbackList = document.getElementById('feedback-list');
                 feedbackList.innerHTML = '';
                 feedbacks.forEach(feedback => {
                     const div = document.createElement('div');
-                    div.className = 'bg-white p-4 rounded-lg shadow-lg';
+                    div.className = 'bg-white p-4 rounded-lg shadow-lg mb-4';
                     div.innerHTML = `
                         <p class="text-gray-800 text-lg">"${feedback.feedback}"</p>
                         <p class="text-gray-600 text-sm mt-2">— ${feedback.name} (${feedback.email})</p>
                     `;
                     feedbackList.appendChild(div);
                 });
-            })
-            .catch(error => {
+            } catch (error) {
                 console.error('Error fetching feedbacks:', error);
-            });
-    }
-
-    // Chatbot Functionality
-    function toggleChatbot() {
-        console.log('Toggling chatbot');
-        const chatbotWindow = document.getElementById('chatbot-window');
-        if (chatbotWindow.style.display === 'block') {
-            chatbotWindow.style.display = 'none';
-        } else {
-            chatbotWindow.style.display = 'block';
-        }
-    }
-
-    function sendChatbotMessage(event) {
-        event.preventDefault();
-        console.log('Sending chatbot message');
-        const input = document.getElementById('chatbot-input');
-        const message = input.value.trim();
-        if (!message) {
-            console.log('Empty message');
-            return;
+            }
         }
 
-        const messages = document.getElementById('chatbot-messages');
-        const userMessage = document.createElement('p');
-        userMessage.className = 'user-message';
-        userMessage.innerHTML = `<strong>You:</strong> ${message}`;
-        messages.appendChild(userMessage);
-
-        // Predefined set of common wedding-related questions
-        let response = "I'm sorry, I didn't understand that. Try asking about booking, venues, costs, cancellations, or how to contact us!";
-        const lowerMessage = message.toLowerCase();
-
-        // Booking-related questions
-        if (lowerMessage.includes('book') || lowerMessage.includes('planner') || lowerMessage.includes('how to start') || lowerMessage.includes('register')) {
-            response = "To book a WeddingPal planner, go to the Registration section, fill out the form with your wedding details, and schedule a call or meeting to get started.";
-        }
-        // Venue-related questions
-        else if (lowerMessage.includes('venue') || lowerMessage.includes('venues') || lowerMessage.includes('location') || lowerMessage.includes('sangeet') || lowerMessage.includes('mehendi') || lowerMessage.includes('reception') || lowerMessage.includes('ceremony')) {
-            response = "We offer venues for Sangeet, Mehendi, Reception, and Ceremony. Check the Venues section to explore detailed designs and features for each event.";
-        }
-        // Cost-related questions
-        else if (lowerMessage.includes('cost') || lowerMessage.includes('fee') || lowerMessage.includes('price') || lowerMessage.includes('how much')) {
-            response = "The advance fee for booking a WeddingPal planner is mentioned in the FAQ section. For detailed pricing, please register and schedule a meeting with us.";
-        }
-        // Cancellation-related questions
-        else if (lowerMessage.includes('cancel') || lowerMessage.includes('cancellation') || lowerMessage.includes('refund')) {
-            response = "To cancel your booking, contact our customer care team at weddingpal@gmail.com or 9611707778, or use the cancellation option in our booking system.";
-        }
-        // Contact-related questions
-        else if (lowerMessage.includes('contact') || lowerMessage.includes('reach') || lowerMessage.includes('support') || lowerMessage.includes('help')) {
-            response = "You can reach us at weddingpal@gmail.com or call 9611707778. Check the Contact section for more details and social media links.";
-        }
-        // FAQ-related questions
-        else if (lowerMessage.includes('faq') || lowerMessage.includes('question') || lowerMessage.includes('ask') || lowerMessage.includes('submit')) {
-            response = "Visit the FAQ section to see common questions or submit a new one using the form provided there.";
-        }
-        // Feedback-related questions
-        else if (lowerMessage.includes('feedback') || lowerMessage.includes('review') || lowerMessage.includes('comment')) {
-            response = "You can submit feedback in the Feedbacks section. Just fill out the form with your name, email, and comments.";
-        }
-        // Vendor-related questions
-        else if (lowerMessage.includes('vendor') || lowerMessage.includes('caterer') || lowerMessage.includes('photographer') || lowerMessage.includes('decorator')) {
-            response = "We can help with vendors like caterers, photographers, and decorators. Register and discuss your needs during your consultation.";
-        }
-        // Timeline-related questions
-        else if (lowerMessage.includes('timeline') || lowerMessage.includes('schedule') || lowerMessage.includes('plan') || lowerMessage.includes('when')) {
-            response = "After booking, we’ll create a personalized timeline for your wedding. Start by registering and scheduling a meeting to plan your events.";
-        }
-        // Customization-related questions
-        else if (lowerMessage.includes('custom') || lowerMessage.includes('personalize') || lowerMessage.includes('theme') || lowerMessage.includes('style')) {
-            response = "We offer customization for themes, decor, and more. Share your preferences during the registration process or in your consultation.";
+        // Chatbot Functionality
+        function toggleChatbot() {
+            const chatbotWindow = document.getElementById('chatbot-window');
+            chatbotWindow.classList.toggle('hidden');
         }
 
-        const botMessage = document.createElement('p');
-        botMessage.className = 'bot-message';
-        botMessage.innerHTML = `<strong>WeddingPal:</strong> ${response}`;
-        messages.appendChild(botMessage);
+        document.getElementById('chatbot-toggle').addEventListener('click', toggleChatbot);
+        document.getElementById('chatbot-close').addEventListener('click', toggleChatbot);
 
-        messages.scrollTop = messages.scrollHeight;
-        input.value = '';
-        console.log('Chatbot response:', response);
-    }
+        document.getElementById('chatbot-form').addEventListener('submit', async (event) => {
+            event.preventDefault();
+            const button = document.getElementById('chatbot-send');
+            showLoading(button);
+            const input = document.getElementById('chatbot-input');
+            const message = input.value.trim();
+            if (!message) {
+                hideLoading(button);
+                return;
+            }
 
-    // Venue Functions
-    function showVenue(type) {
-        console.log(`Showing venue: ${type}`);
-        const venueSection = document.getElementById("venue-section");
-        const venueImagesDiv = document.getElementById("venue-images");
-        const venueDetailsDiv = document.getElementById("venue-details");
+            const messages = document.getElementById('chatbot-messages');
+            const userMessage = document.createElement('p');
+            userMessage.className = 'user-message';
+            userMessage.innerHTML = `<strong>You:</strong> ${message}`;
+            messages.appendChild(userMessage);
 
-        venueImagesDiv.innerHTML = "";
-        venueDetailsDiv.innerHTML = "";
+            // Save user message to Supabase
+            try {
+                const { error } = await supabase.from('chatbot_messages').insert([{ message, sender: 'user' }]);
+                if (error) throw error;
+            } catch (error) {
+                console.error('Error saving chatbot message:', error);
+            }
 
-        const venueDetails = {
-            "sangeet": "A lively evening with DJ nights, stage setup, and themed decor to celebrate the joy of togetherness.",
-            "mehendi": "A colorful afternoon with floral decor, henna artists, refreshments, and cozy seating arrangements.",
-            "reception": "A grand celebration with elegant lighting, music bands, luxurious buffet, and curated themes.",
-            "ceremony": "A sacred setting with traditional mandap, rituals, floral designs, and divine ambiance."
-        };
+            // Dynamic response logic
+            let response = "I'm sorry, I didn't understand that. Try asking about booking, venues, costs, cancellations, or how to contact us!";
+            const lowerMessage = message.toLowerCase();
 
-        const venueImages = {
-            "sangeet": ["image s1.png", "image s2.png", "image s3.png", "image s4.png", "image s5.png", "image s6.png", "image s7.png", "image s8.png"],
-            "mehendi": ["image m1.png", "image m2.png", "image m3.png", "image m4.png", "image m5.png", "image m6.png", "image m7.png", "image m8.png"],
-            "reception": ["image r1.png", "image r2.png", "image r3.png", "image r4.png", "image r5.png", "image r6.png", "image r7.png", "image r8.png"],
-            "ceremony": ["image c1.png", "image c2.png", "image c3.png", "image c4.png", "image c5.png", "image c6.png", "image c7.png", "image c8.png"]
-        };
+            if (lowerMessage.includes('book') || lowerMessage.includes('planner') || lowerMessage.includes('how to start') || lowerMessage.includes('register')) {
+                response = "To book a WeddingPal planner, go to the Registration section, fill out the form with your wedding details, and schedule a call or meeting to get started.";
+            } else if (lowerMessage.includes('venue') || lowerMessage.includes('venues') || lowerMessage.includes('location') || lowerMessage.includes('sangeet') || lowerMessage.includes('mehendi') || lowerMessage.includes('reception') || lowerMessage.includes('ceremony')) {
+                response = "We offer venues for Sangeet, Mehendi, Reception, and Ceremony. Check the Venues section to explore detailed designs and features for each event.";
+            } else if (lowerMessage.includes('cost') || lowerMessage.includes('fee') || lowerMessage.includes('price') || lowerMessage.includes('how much')) {
+                response = "The advance fee for booking a WeddingPal planner is $500. For detailed pricing, please register and schedule a meeting with us.";
+            } else if (lowerMessage.includes('cancel') || lowerMessage.includes('cancellation') || lowerMessage.includes('refund')) {
+                response = "To cancel your booking, contact our customer care team at weddingpal@gmail.com or 9611707778, or use the cancellation option in our booking system.";
+            } else if (lowerMessage.includes('contact') || lowerMessage.includes('reach') || lowerMessage.includes('support') || lowerMessage.includes('help')) {
+                response = "You can reach us at weddingpal@gmail.com or call 9611707778. Check the Contact section for more details and social media links.";
+            } else if (lowerMessage.includes('faq') || lowerMessage.includes('question') || lowerMessage.includes('ask') || lowerMessage.includes('submit')) {
+                response = "Visit the FAQ section to see common questions or submit a new one using the form provided there.";
+            } else if (lowerMessage.includes('feedback') || lowerMessage.includes('review') || lowerMessage.includes('comment')) {
+                response = "You can submit feedback in the Feedbacks section. Just fill out the form with your name, email, and comments.";
+            } else if (lowerMessage.includes('vendor') || lowerMessage.includes('caterer') || lowerMessage.includes('photographer') || lowerMessage.includes('decorator')) {
+                response = "We can help with vendors like caterers, photographers, and decorators. Register and discuss your needs during your consultation.";
+            } else if (lowerMessage.includes('timeline') || lowerMessage.includes('schedule') || lowerMessage.includes('plan') || lowerMessage.includes('when')) {
+                response = "After booking, we’ll create a personalized timeline for your wedding. Start by registering and scheduling a meeting to plan your events.";
+            } else if (lowerMessage.includes('custom') || lowerMessage.includes('personalize') || lowerMessage.includes('theme') || lowerMessage.includes('style')) {
+                response = "We offer customization for themes, decor, and more. Share your preferences during the registration process or in your consultation.";
+            }
 
-        const venueFeatures = {
-            "image s1.png": ["Live Band", "Red Carpet Entry", "Light Tunnel", "Fireworks", "Photobooth", "Table Service"],
-            "image s2.png": ["Luxury Chairs", "Dance Floor", "Open Bar", "Reception Cake", "Backdrop Panel", "Golden Theme"],
-            "image s3.png": ["Rose Decor", "LED Letters", "Ceiling Drapes", "Couple Throne", "Food Counters", "Jazz Music"],
-            "image s4.png": ["Romantic Lighting", "Decor Lounge", "String Lights", "Entry Pathway", "Customized Props", "Hanging Florals"],
-            "image s5.png": ["Welcome Board", "Artist Stage", "Mood Lighting", "Soundproof Setup", "Interactive Entry", "Themed Chairs"],
-            "image s6.png": ["Fog Machine", "Bridal Entry Music", "Groom Entry Jeep", "Live Instrumental", "Gold Curtain", "Dance Props"],
-            "image s7.png": ["Laser Show", "3D Mapping", "Stage Skirt", "Open Bar Area", "Dhol Players", "LED Rings"],
-            "image s8.png": ["Color Drapes", "Fairy Light Path", "Floating Lanterns", "Backstage Greenroom", "Live Stream Setup", "Fan Zone"],
-            "image m1.png": ["Henna Artists", "Colorful Cushions", "Flower Jewelry", "Mehendi Cones", "Rajasthani Decor", "Mocktails"],
-            "image m2.png": ["Rangoli Setup", "Traditional Folk Music", "Gota Patti Decor", "Cane Furniture", "Banana Leaf Stall", "Fragrance Station"],
-            "image m3.png": ["Garden Setup", "Swing Decor", "Garland Making", "Welcome Drinks", "Live Singers", "Thematic Dress Code"],
-            "image m4.png": ["Floral Canopy", "Floor Seating", "Bride Entry Music", "Pichwai Prints", "DIY Booth", "Jewelry Station"],
-            "image m5.png": ["Henna Artists", "Colorful Cushions", "Flower Jewelry", "Mehendi Cones", "Rajasthani Decor", "Mocktails"],
-            "image m6.png": ["Rangoli Setup", "Traditional Folk Music", "Gota Patti Decor", "Cane Furniture", "Banana Leaf Stall", "Fragrance Station"],
-            "image m7.png": ["Garden Setup", "Swing Decor", "Garland Making", "Welcome Drinks", "Live Singers", "Thematic Dress Code"],
-            "image m8.png": ["Floral Canopy", "Floor Seating", "Bride Entry Music", "Pichwai Prints", "DIY Booth", "Jewelry Station"],
-            "image r1.png": ["Live Band", "Red Carpet Entry", "Light Tunnel", "Fireworks", "Photobooth", "Table Service"],
-            "image r2.png": ["Luxury Chairs", "Dance Floor", "Open Bar", "Reception Cake", "Backdrop Panel", "Golden Theme"],
-            "image r3.png": ["Rose Decor", "LED Letters", "Ceiling Drapes", "Couple Throne", "Food Counters", "Jazz Music"],
-            "image r4.png": ["Romantic Lighting", "Decor Lounge", "String Lights", "Entry Pathway", "Customized Props", "Hanging Florals"],
-            "image r5.png": ["Live Band", "Red Carpet Entry", "Light Tunnel", "Fireworks", "Photobooth", "Table Service"],
-            "image r6.png": ["Luxury Chairs", "Dance Floor", "Open Bar", "Reception Cake", "Backdrop Panel", "Golden Theme"],
-            "image r7.png": ["Rose Decor", "LED Letters", "Ceiling Drapes", "Couple Throne", "Food Counters", "Jazz Music"],
-            "image r8.png": ["Romantic Lighting", "Decor Lounge", "String Lights", "Entry Pathway", "Customized Props", "Hanging Florals"],
-            "image c1.png": ["Mandap Decor", "Sacred Fire Setup", "Puja Samagri", "Ganesha Idol", "Traditional Seating", "Marigold Design"],
-            "image c2.png": ["South Indian Setup", "Banana Leaf Decor", "Stage Flowers", "Priest Services", "Bride Umbrella", "Carnatic Music"],
-            "image c3.png": ["Royal Mandap", "Chandan Station", "Spiritual Music", "Kalash Setup", "Chorus Singers", "Handmade Rangoli"],
-            "image c4.png": ["Temple Theme", "Red-Yellow Theme", "Ornamental Drapes", "Flute Player", "Havan Kund", "Vedic Chanting"],
-            "image c5.png": ["Mandap Decor", "Sacred Fire Setup", "Puja Samagri", "Ganesha Idol", "Traditional Seating", "Marigold Design"],
-            "image c6.png": ["South Indian Setup", "Banana Leaf Decor", "Stage Flowers", "Priest Services", "Bride Umbrella", "Carnatic Music"],
-            "image c7.png": ["Royal Mandap", "Chandan Station", "Spiritual Music", "Kalash Setup", "Chorus Singers", "Handmade Rangoli"],
-            "image c8.png": ["Temple Theme", "Red-Yellow Theme", "Ornamental Drapes", "Flute Player", "Havan Kund", "Vedic Chanting"]
-        };
+            const botMessage = document.createElement('p');
+            botMessage.className = 'bot-message';
+            botMessage.innerHTML = `<strong>WeddingPal:</strong> ${response}`;
+            messages.appendChild(botMessage);
 
-        venueDetailsDiv.innerHTML = `<p class="text-xl bg-yellow-200 rounded-lg p-4 shadow-md">${venueDetails[type]}</p>`;
+            // Save bot response to Supabase
+            try {
+                const { error } = await supabase.from('chatbot_messages').insert([{ message: response, sender: 'bot' }]);
+                if (error) throw error;
+            } catch (error) {
+                console.error('Error saving bot response:', error);
+            }
 
-        venueImages[type].forEach(image => {
-            const card = document.createElement("div");
-            card.className = "bg-white rounded-lg shadow-md p-4 w-72 text-left";
-            const img = document.createElement("img");
-            img.src = `images/${image}`;
-            img.alt = `${type} venue`;
-            img.className = "rounded-md h-40 w-full object-cover mb-2";
-            const featureList = document.createElement("ul");
-            featureList.className = "list-disc list-inside text-sm text-gray-700";
-            (venueFeatures[image] || []).forEach(feature => {
-                const li = document.createElement("li");
-                li.textContent = feature;
-                featureList.appendChild(li);
-            });
-            card.appendChild(img);
-            card.appendChild(featureList);
-            venueImagesDiv.appendChild(card);
+            messages.scrollTop = messages.scrollHeight;
+            input.value = '';
+            hideLoading(button);
         });
 
-        venueSection.classList.remove("hidden");
-        venueSection.scrollIntoView({ behavior: "smooth" });
-    }
-</script>
+        // Venue Functions
+        function showVenue(type) {
+            const venueSection = document.getElementById("venue-section");
+            const venueImagesDiv = document.getElementById("venue-images");
+            const venueDetailsDiv = document.getElementById("venue-details");
+
+            venueImagesDiv.innerHTML = "";
+            venueDetailsDiv.innerHTML = "";
+
+            const venueDetails = {
+                "sangeet": "A lively evening with DJ nights, stage setup, and themed decor to celebrate the joy of togetherness.",
+                "mehendi": "A colorful afternoon with floral decor, henna artists, refreshments, and cozy seating arrangements.",
+                "reception": "A grand celebration with elegant lighting, music bands, luxurious buffet, and curated themes.",
+                "ceremony": "A sacred setting with traditional mandap, rituals, floral designs, and divine ambiance."
+            };
+
+            // Sample images (replace with actual paths if different)
+            const venueImages = {
+                "sangeet": ["image4.png", "image5.png", "image6.png", "image7.png"],
+                "mehendi": ["image8.png", "image9.png", "image10.png", "image11.png"],
+                "reception": ["image13.png", "image14.png", "image15.png", "image17.png"],
+                "ceremony": ["image4.png", "image5.png", "image6.png", "image7.png"]
+            };
+
+            const venueFeatures = {
+                "image4.png": ["Live Band", "Red Carpet Entry", "Light Tunnel"],
+                "image5.png": ["Luxury Chairs", "Dance Floor", "Open Bar"],
+                "image6.png": ["Rose Decor", "LED Letters", "Ceiling Drapes"],
+                "image7.png": ["Romantic Lighting", "Decor Lounge", "String Lights"],
+                "image8.png": ["Henna Artists", "Colorful Cushions", "Flower Jewelry"],
+                "image9.png": ["Rangoli Setup", "Traditional Folk Music", "Gota Patti Decor"],
+                "image10.png": ["Garden Setup", "Swing Decor", "Garland Making"],
+                "image11.png": ["Floral Canopy", "Floor Seating", "Bride Entry Music"],
+                "image13.png": ["Live Band", "Red Carpet Entry", "Light Tunnel"],
+                "image14.png": ["Luxury Chairs", "Dance Floor", "Open Bar"],
+                "image15.png": ["Rose Decor", "LED Letters", "Ceiling Drapes"],
+                "image17.png": ["Romantic Lighting", "Decor Lounge", "String Lights"]
+            };
+
+            venueDetailsDiv.innerHTML = `<p class="text-xl bg-yellow-200 rounded-lg p-4 shadow-md">${venueDetails[type]}</p>`;
+
+            venueImages[type].forEach(image => {
+                const card = document.createElement("div");
+                card.className = "bg-white rounded-lg shadow-md p-4 w-72 text-left";
+                const img = document.createElement("img");
+                img.src = `/images/${image}`;
+                img.alt = `${type} venue`;
+                img.className = "rounded-md h-40 w-full object-cover mb-2";
+                const featureList = document.createElement("ul");
+                featureList.className = "list-disc list-inside text-sm text-gray-700";
+                (venueFeatures[image] || []).forEach(feature => {
+                    const li = document.createElement("li");
+                    li.textContent = feature;
+                    featureList.appendChild(li);
+                });
+                card.appendChild(img);
+                card.appendChild(featureList);
+                venueImagesDiv.appendChild(card);
+            });
+
+            venueSection.classList.remove("hidden");
+            venueSection.scrollIntoView({ behavior: "smooth" });
+        }
+
+        // Start Planning Button
+        document.getElementById('start-planning').addEventListener('click', () => {
+            navigateToSection('registration');
+        });
+    </script>
 </body>
 </html>

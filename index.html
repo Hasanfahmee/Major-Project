@@ -9,8 +9,6 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper/swiper-bundle.min.css" />
-    <!-- Supabase Client -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         body { font-family: 'Roboto', sans-serif; margin: 0; padding: 0; }
         .script-font { font-family: 'Great Vibes', cursive; }
@@ -70,7 +68,7 @@
     </style>
 </head>
 <body class="bg-white text-black">
-    <!-- Header (Unchanged) -->
+    <!-- Header -->
     <header class="bg-red-800 text-white">
         <div class="container mx-auto flex justify-between items-center py-4 px-6">
             <div class="text-2xl script-font">WeddingPal</div>
@@ -92,7 +90,7 @@
         </div>
     </header>
 
-    <!-- Hero Section with Swiper.js (Unchanged) -->
+    <!-- Hero Section with Swiper.js -->
     <section id="home" class="relative text-center py-1">
         <div class="home-swiper w-full h-[500px]">
             <div class="swiper-wrapper">
@@ -112,7 +110,7 @@
         </div>
     </section>
 
-    <!-- Planning Section (Unchanged) -->
+    <!-- Planning Section -->
     <section id="about" class="bg-red-800 text-white text-center py-8">
         <h2 class="text-5xl script-font text-yellow-600">Planning a dream wedding?</h2>
         <p class="mt-4 font-serif leading-relaxed text-2xl">
@@ -122,7 +120,7 @@
         <button onclick="navigateToSection('registration')" class="bg-yellow-600 text-white py-2 px-4 rounded mt-4 hover:bg-yellow-700">Start Planning Now</button>
     </section>
 
-    <!-- Top Rated WeddingPal Section (Unchanged) -->
+    <!-- Top Rated WeddingPal Section -->
     <section id="ratings" class="text-center py-8">
         <h2 class="text-5xl script-font text-yellow-600">Top rated WeddingPal</h2>
         <section class="bg-yellow-100 py-8 flex justify-center">
@@ -155,7 +153,7 @@
         </section>
     </section>
 
-    <!-- Our Work Section (Unchanged) -->
+    <!-- Our Work Section -->
     <section id="venues" class="bg-white text-black text-center py-8">
         <h2 class="text-5xl script-font text-yellow-600">Experience lifetime with us</h2>
         <div class="container mx-auto mt-4 px-6">
@@ -173,7 +171,7 @@
         </div>
     </section>
 
-    <!-- What WeddingPal Provides Section (Replaced from Provided Code) -->
+    <!-- What WeddingPal Provides Section -->
     <section class="bg-red-800 text-white text-center py-8">
         <h2 class="text-5xl text-yellow-600">What WeddingPal provides</h2>
         <div class="flex justify-center space-x-4 mt-4">
@@ -196,14 +194,14 @@
         </div>
     </section>
 
-    <!-- Venue Designs Section (Replaced from Provided Code) -->
+    <!-- Venue Designs Section -->
     <section id="venue-section" class="hidden bg-gray-100 text-center py-8">
         <h2 class="text-5xl text-yellow-600">Venue Designs</h2>
         <div id="venue-details" class="text-lg text-gray-700 mt-4 px-6"></div>
         <div id="venue-images" class="flex flex-wrap justify-center gap-6 mt-4 px-4"></div>
     </section>
 
-    <!-- Our Promise Section (Unchanged) -->
+    <!-- Our Promise Section -->
     <section class="text-center py-8 bg-gray-100">
         <h2 class="text-5xl script-font text-yellow-600">WeddingPal’s promise stays...</h2>
         <div class="container mx-auto flex flex-col md:flex-row justify-center space-x-0 md:space-x-4 mt-4 px-4">
@@ -231,7 +229,7 @@
         </div>
     </section>
 
-    <!-- Blog/Social Media Section (Unchanged) -->
+    <!-- Blog/Social Media Section -->
     <section class="bg-red-800 text-white text-center py-8">
         <h2 class="text-5xl script-font text-yellow-600">WeddingPal’s Social Media Posts</h2>
         <div class="container mx-auto flex justify-between items-center mt-4 px-8">
@@ -277,7 +275,7 @@
         </div>
     </section>
 
-    <!-- Registration Section (Unchanged) -->
+    <!-- Registration Section -->
     <section id="registration" class="relative text-white py-8" style="background-image: url('images/image 17.png'); background-size: cover;">
         <div class="bg-overlay"></div>
         <div class="relative container mx-auto flex justify-between items-center px-6">
@@ -310,11 +308,12 @@
                     </div>
                     <button type="submit" class="bg-red-800 text-white py-2 px-4 rounded hover:bg-red-900">REGISTER</button>
                 </form>
+                <div id="registration-list" class="mt-4 max-w-4xl mx-auto"></div>
             </div>
         </div>
     </section>
 
-    <!-- Registration Response (Unchanged) -->
+    <!-- Registration Response -->
     <div id="registration-response" class="hidden bg-red-800 text-white p-6">
         <h2 class="text-2xl text-yellow-600 mb-4">Next Steps with WeddingPal</h2>
         <button onclick="makeCall()" class="bg-yellow-600 text-white py-2 px-4 rounded mb-4 hover:bg-yellow-700">Call Me Now</button>
@@ -344,7 +343,7 @@
                     <option value="3:00 PM">3:00 PM</option>
                     <option value="5:00 PM">5:00 PM</option>
                 </select>
-                <select name="month" required class="w defiant w-full p-2 mb-2 rounded bg-white text-black">
+                <select name="month" required class="w-full p-2 mb-2 rounded bg-white text-black">
                     <option value="" disabled selected>Month</option>
                     <option value="January">January</option>
                     <option value="February">February</option>
@@ -361,6 +360,8 @@
                 </select>
                 <button type="submit" class="bg-yellow-600 text-white py-2 px-4 rounded hover:bg-yellow-700">Schedule Meeting</button>
             </form>
+            <div id="call-list" class="mt-4 text-yellow-600"></div>
+            <div id="meeting-list" class="mt-4 text-yellow-600"></div>
         </div>
         <div id="meeting-response" class="mt-4 text-yellow-600"></div>
         <div class="mt-4">
@@ -370,11 +371,12 @@
                 <button type="submit" class="bg-yellow-600 text-white py-2 px-4 rounded mt-2 hover:bg-yellow-700">Send Message</button>
             </form>
             <div id="text-response" class="mt-4 text-yellow-600"></div>
+            <div id="message-list" class="mt-4 text-yellow-600"></div>
         </div>
         <button onclick="closeResponse()" class="bg-gray-600 text-white py-2 px-4 rounded mt-4 hover:bg-gray-700">Back to Website</button>
     </div>
 
-    <!-- FAQ Section (Unchanged) -->
+    <!-- FAQ Section -->
     <section id="faq" class="bg-red-800 text-white text-center py-8">
         <h2 class="text-5xl script-font text-yellow-600">WeddingPal FAQ</h2>
         <div class="container mx-auto mt-4 px-4 flex justify-center">
@@ -411,10 +413,11 @@
                 <button type="submit" class="bg-yellow-600 text-white py-2 px-4 rounded mt-4 hover:bg-yellow-700">Submit Question</button>
             </form>
             <div id="faq-response" class="mt-4 text-yellow-600"></div>
+            <div id="faq-list" class="mt-4 max-w-4xl mx-auto"></div>
         </div>
     </section>
 
-    <!-- Feedback Section (Unchanged) -->
+    <!-- Feedback Section -->
     <section id="feedbacks" class="bg-red-800 text-white text-center py-8">
         <h2 class="text-5xl script-font text-yellow-600">WeddingPal Feedbacks</h2>
         <div class="container mx-auto mt-6 flex flex-col items-center">
@@ -429,7 +432,7 @@
         <div id="feedback-list" class="mt-6 max-w-4xl mx-auto"></div>
     </section>
 
-    <!-- Footer (Unchanged) -->
+    <!-- Footer -->
     <footer id="footer" class="bg-white text-black text-center py-8">
         <div class="container mx-auto">
             <div class="text-2xl script-font mb-4">WeddingPal</div>
@@ -449,7 +452,7 @@
         </div>
     </footer>
 
-    <!-- Chatbot (Replaced from Provided Code) -->
+    <!-- Chatbot -->
     <div id="chatbot">
         <button onclick="toggleChatbot()" class="bg-yellow-600 text-white p-4 rounded-full hover:bg-yellow-700 transition">
             <i class="fas fa-robot text-xl"></i>
@@ -474,10 +477,10 @@
     <!-- JavaScript -->
     <script src="https://cdn.jsdelivr.net/npm/swiper/swiper-bundle.min.js"></script>
     <script>
-        // Initialize Supabase
-        const supabase = Supabase.createClient('https://lfupbivjszsibuplcbgl.supabase.co', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxmdXBiaXZqc3pzaWJ1cGxjYmdsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDY5OTI1NjIsImV4cCI6MjA2MjU2ODU2Mn0.mhMwL_CARYDwa7wMdINJwYSvoBZEvVuRhCBkrlo8mZ4');
+        // Replace with your Render backend URL
+        const API_URL = 'https://your-render-url.onrender.com';
 
-        // Swiper Initialization (Unchanged)
+        // Swiper Initialization
         document.addEventListener("DOMContentLoaded", function () {
             new Swiper(".home-swiper", {
                 loop: true,
@@ -497,17 +500,22 @@
                     1024: { slidesPerView: 6 }
                 }
             });
+            fetchRegistrations();
+            fetchCalls();
+            fetchMeetings();
+            fetchMessages();
+            fetchFAQs();
             fetchFeedbacks();
         });
 
-        // Navigation Helper (Unchanged)
+        // Navigation Helper
         function navigateToSection(sectionId) {
             console.log(`Navigating to ${sectionId}`);
             const section = document.getElementById(sectionId);
             section.scrollIntoView({ behavior: 'smooth' });
         }
 
-        // Smooth Scrolling for Nav Links (Unchanged)
+        // Smooth Scrolling for Nav Links
         document.querySelectorAll('.nav-link').forEach(anchor => {
             anchor.addEventListener('click', function(e) {
                 e.preventDefault();
@@ -516,7 +524,7 @@
             });
         });
 
-        // Search Functionality (Unchanged)
+        // Search Functionality
         function performGlobalSearch() {
             console.log('Performing search');
             const query = document.getElementById('global-search').value.toLowerCase().trim();
@@ -536,7 +544,7 @@
             if (!found) alert('No results found for "' + query + '".');
         }
 
-        // Registration Handling (Updated for Supabase)
+        // Registration Handling
         async function handleRegistration(event) {
             event.preventDefault();
             console.log('Handling registration');
@@ -545,17 +553,22 @@
             const data = Object.fromEntries(formData);
             console.log('Registration data:', data);
             try {
-                const { error } = await supabase.from('registrations').insert([data]);
-                if (error) throw error;
+                const response = await fetch(`${API_URL}/api/registrations`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+                if (!response.ok) throw new Error('Network error');
                 document.getElementById('reg-form').classList.add('hidden');
                 document.getElementById('registration-response').classList.remove('hidden');
+                fetchRegistrations();
             } catch (error) {
                 console.error('Registration error:', error);
-                alert(`Registration failed: ${error.message}`);
+                alert('Registration failed. Please try again.');
             }
         }
 
-        // Close Response Box (Unchanged)
+        // Close Response Box
         function closeResponse() {
             console.log('Closing response');
             document.getElementById('registration-response').classList.add('hidden');
@@ -563,20 +576,25 @@
             document.getElementById('registration-form').reset();
         }
 
-        // Call Scheduling (Updated for Supabase)
+        // Call Scheduling
         async function makeCall() {
             console.log('Scheduling call');
             try {
-                const { error } = await supabase.from('calls').insert([{ created_at: new Date().toISOString() }]);
-                if (error) throw error;
+                const response = await fetch(`${API_URL}/api/calls`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ created_at: new Date().toISOString() })
+                });
+                if (!response.ok) throw new Error('Network error');
                 alert('Call scheduled successfully! We will contact you soon.');
+                fetchCalls();
             } catch (error) {
                 console.error('Call error:', error);
-                alert(`Failed to schedule call: ${error.message}`);
+                alert('Failed to schedule call. Please try again.');
             }
         }
 
-        // Meeting Scheduling (Updated for Supabase)
+        // Meeting Scheduling
         async function scheduleMeeting(event) {
             event.preventDefault();
             console.log('Scheduling meeting');
@@ -585,17 +603,22 @@
             const data = Object.fromEntries(formData);
             console.log('Meeting data:', data);
             try {
-                const { error } = await supabase.from('meetings').insert([data]);
-                if (error) throw error;
+                const response = await fetch(`${API_URL}/api/meetings`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+                if (!response.ok) throw new Error('Network error');
                 document.getElementById('meeting-response').innerText = 'Meeting scheduled successfully!';
                 form.reset();
+                fetchMeetings();
             } catch (error) {
                 console.error('Meeting error:', error);
-                alert(`Failed to schedule meeting: ${error.message}`);
+                alert('Failed to schedule meeting. Please try again.');
             }
         }
 
-        // Text Message Submission (Updated for Supabase)
+        // Text Message Submission
         async function sendText(event) {
             event.preventDefault();
             console.log('Sending message');
@@ -604,17 +627,22 @@
             const data = Object.fromEntries(formData);
             console.log('Message data:', data);
             try {
-                const { error } = await supabase.from('messages').insert([data]);
-                if (error) throw error;
+                const response = await fetch(`${API_URL}/api/messages`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+                if (!response.ok) throw new Error('Network error');
                 document.getElementById('text-response').innerHTML = 'Message sent successfully!<br><span class="text-yellow-600">WeddingPal: Thanks for your message! We’ll get back to you soon.</span>';
                 form.reset();
+                fetchMessages();
             } catch (error) {
                 console.error('Message error:', error);
-                alert(`Failed to send message: ${error.message}`);
+                alert('Failed to send message. Please try again.');
             }
         }
 
-        // FAQ Submission (Updated for Supabase)
+        // FAQ Submission
         async function submitFAQ(event) {
             event.preventDefault();
             console.log('Submitting FAQ');
@@ -623,17 +651,22 @@
             const data = Object.fromEntries(formData);
             console.log('FAQ data:', data);
             try {
-                const { error } = await supabase.from('faqs').insert([data]);
-                if (error) throw error;
+                const response = await fetch(`${API_URL}/api/faqs`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+                if (!response.ok) throw new Error('Network error');
                 document.getElementById('faq-response').innerText = 'Question submitted successfully!';
                 form.reset();
+                fetchFAQs();
             } catch (error) {
                 console.error('FAQ error:', error);
-                alert(`Failed to submit FAQ: ${error.message}`);
+                alert('Failed to submit FAQ. Please try again.');
             }
         }
 
-        // Feedback Submission (Updated for Supabase)
+        // Feedback Submission
         async function submitFeedback(event) {
             event.preventDefault();
             console.log('Submitting feedback');
@@ -642,23 +675,124 @@
             const data = Object.fromEntries(formData);
             console.log('Feedback data:', data);
             try {
-                const { error } = await supabase.from('feedbacks').insert([data]);
-                if (error) throw error;
+                const response = await fetch(`${API_URL}/api/feedbacks`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+                if (!response.ok) throw new Error('Network error');
                 document.getElementById('feedback-response').innerText = 'Feedback submitted successfully!';
                 form.reset();
                 fetchFeedbacks();
             } catch (error) {
                 console.error('Feedback error:', error);
-                alert(`Failed to submit feedback: ${error.message}`);
+                alert('Failed to submit feedback. Please try again.');
             }
         }
 
-        // Fetch and Display Feedbacks (Updated for Supabase)
-        async function fetchFeedbacks() {
-            console.log('Fetching feedbacks');
+        // Fetch and Display Data
+        async function fetchRegistrations() {
             try {
-                const { data: feedbacks, error } = await supabase.from('feedbacks').select('*');
-                if (error) throw error;
+                const response = await fetch(`${API_URL}/api/registrations`);
+                if (!response.ok) throw new Error('Network error');
+                const registrations = await response.json();
+                const registrationList = document.getElementById('registration-list');
+                registrationList.innerHTML = '';
+                registrations.forEach(reg => {
+                    const div = document.createElement('div');
+                    div.className = 'bg-white p-4 rounded-lg shadow-lg mb-4';
+                    div.innerHTML = `
+                        <p class="text-gray-800 text-lg"><strong>Wedding:</strong> ${reg.aboutwed}</p>
+                        <p class="text-gray-600 text-sm"><strong>Name:</strong> ${reg.name} (${reg.email})</p>
+                        <p class="text-gray-600 text-sm"><strong>Mobile:</strong> ${reg.mobile}</p>
+                        <p class="text-gray-600 text-sm"><strong>Location:</strong> ${reg.location}</p>
+                    `;
+                    registrationList.appendChild(div);
+                });
+            } catch (error) {
+                console.error('Error fetching registrations:', error);
+            }
+        }
+
+        async function fetchCalls() {
+            try {
+                const response = await fetch(`${API_URL}/api/calls`);
+                if (!response.ok) throw new Error('Network error');
+                const calls = await response.json();
+                const callList = document.getElementById('call-list');
+                callList.innerHTML = '';
+                calls.forEach(call => {
+                    const div = document.createElement('div');
+                    div.className = 'text-gray-600 text-sm mb-2';
+                    div.innerHTML = `Call scheduled at: ${call.created_at}`;
+                    callList.appendChild(div);
+                });
+            } catch (error) {
+                console.error('Error fetching calls:', error);
+            }
+        }
+
+        async function fetchMeetings() {
+            try {
+                const response = await fetch(`${API_URL}/api/meetings`);
+                if (!response.ok) throw new Error('Network error');
+                const meetings = await response.json();
+                const meetingList = document.getElementById('meeting-list');
+                meetingList.innerHTML = '';
+                meetings.forEach(meeting => {
+                    const div = document.createElement('div');
+                    div.className = 'text-gray-600 text-sm mb-2';
+                    div.innerHTML = `Meeting: ${meeting.type} on ${meeting.day}, ${meeting.month} at ${meeting.time}`;
+                    meetingList.appendChild(div);
+                });
+            } catch (error) {
+                console.error('Error fetching meetings:', error);
+            }
+        }
+
+        async function fetchMessages() {
+            try {
+                const response = await fetch(`${API_URL}/api/messages`);
+                if (!response.ok) throw new Error('Network error');
+                const messages = await response.json();
+                const messageList = document.getElementById('message-list');
+                messageList.innerHTML = '';
+                messages.forEach(msg => {
+                    const div = document.createElement('div');
+                    div.className = 'text-gray-600 text-sm mb-2';
+                    div.innerHTML = `Message: ${msg.message}`;
+                    messageList.appendChild(div);
+                });
+            } catch (error) {
+                console.error('Error fetching messages:', error);
+            }
+        }
+
+        async function fetchFAQs() {
+            try {
+                const response = await fetch(`${API_URL}/api/faqs`);
+                if (!response.ok) throw new Error('Network error');
+                const faqs = await response.json();
+                const faqList = document.getElementById('faq-list');
+                faqList.innerHTML = '';
+                faqs.forEach(faq => {
+                    const div = document.createElement('div');
+                    div.className = 'bg-white p-4 rounded-lg shadow-lg mb-4';
+                    div.innerHTML = `
+                        <p class="text-gray-800 text-lg">"${faq.question}"</p>
+                    `;
+                    faqList.appendChild(div);
+                });
+            } catch (error) {
+                console.error('Error fetching FAQs:', error);
+            }
+        }
+
+        async function fetchFeedbacks() {
+            try {
+                const response = await fetch(`${API_URL}/api/feedbacks`);
+                if (!response.ok) throw new Error('Network error');
+                const feedbacks = await response.json();
                 const feedbackList = document.getElementById('feedback-list');
                 feedbackList.innerHTML = '';
                 feedbacks.forEach(feedback => {
@@ -675,15 +809,11 @@
             }
         }
 
-        // Chatbot Functionality (Replaced from Provided Code)
+        // Chatbot Functionality
         function toggleChatbot() {
             console.log('Toggling chatbot');
             const chatbotWindow = document.getElementById('chatbot-window');
-            if (chatbotWindow.style.display === 'block') {
-                chatbotWindow.style.display = 'none';
-            } else {
-                chatbotWindow.style.display = 'block';
-            }
+            chatbotWindow.classList.toggle('hidden');
         }
 
         function sendChatbotMessage(event) {
@@ -737,7 +867,7 @@
             console.log('Chatbot response:', response);
         }
 
-        // Venue Functions (Replaced from Provided Code)
+        // Venue Functions
         function showVenue(type) {
             console.log(`Showing venue: ${type}`);
             const venueSection = document.getElementById("venue-section");

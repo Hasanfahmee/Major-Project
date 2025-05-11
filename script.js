@@ -2,26 +2,31 @@
 document.addEventListener("DOMContentLoaded", function () {
     try {
         // Home Slideshow (no arrows or pagination)
-        const homeSwiper = new Swiper(".home-swiper", {
-            loop: true,
-            autoplay: { delay: 3000 },
-            speed: 800
-        });
+        if (typeof Swiper !== 'undefined') {
+            const homeSwiper = new Swiper(".home-swiper", {
+                loop: true,
+                autoplay: { delay: 3000 },
+                speed: 800
+            });
 
-        // Social Media Slideshow (with arrows and pagination)
-        const socialSwiper = new Swiper(".social-media-swiper", {
-            loop: true,
-            slidesPerView: 3,
-            spaceBetween: 10,
-            autoplay: { delay: 4000 },
-            navigation: { nextEl: ".swiper-button-next", prevEl: ".swiper-button-prev" },
-            pagination: { el: ".swiper-pagination", clickable: true },
-            breakpoints: {
-                320: { slidesPerView: 2, spaceBetween: 8 },
-                640: { slidesPerView: 3, spaceBetween: 10 },
-                1024: { slidesPerView: 4, spaceBetween: 12 }
-            }
-        });
+            // Social Media Slideshow (with arrows and pagination)
+            const socialSwiper = new Swiper(".social-media-swiper", {
+                loop: true,
+                slidesPerView: 3,
+                spaceBetween: 10,
+                autoplay: { delay: 4000 },
+                navigation: { nextEl: ".swiper-button-next", prevEl: ".swiper-button-prev" },
+                pagination: { el: ".swiper-pagination", clickable: true },
+                breakpoints: {
+                    320: { slidesPerView: 2, spaceBetween: 8 },
+                    640: { slidesPerView: 3, spaceBetween: 10 },
+                    1024: { slidesPerView: 4, spaceBetween: 12 }
+                }
+            });
+        } else {
+            console.error('Swiper library not loaded');
+            displayError('Slideshow functionality unavailable. Please refresh the page.');
+        }
 
         // Initialize CSRF token and feedbacks
         fetchCsrfToken();
@@ -49,18 +54,20 @@ let csrfToken = '';
 async function fetchCsrfToken() {
     try {
         const response = await fetch(`${API_BASE_URL}/csrf-token`, { method: 'GET' });
-        if (!response.ok) {
-            throw new Error(`HTTP error! Status: ${response.status}`);
-        }
+        if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
         const data = await response.json();
-        csrfToken = data.csrfToken;
+        csrfToken = data.csrfToken || 'fallback-token';
         console.log('CSRF token fetched:', csrfToken);
-        document.querySelectorAll('[name="csrf_token"]').forEach(input => input.value = csrfToken);
+        document.querySelectorAll('[name="csrf_token"]').forEach(input => {
+            if (input) input.value = csrfToken;
+        });
     } catch (err) {
         console.error('Failed to fetch CSRF token:', err.message);
         csrfToken = 'fallback-token';
-        document.querySelectorAll('[name="csrf_token"]').forEach(input => input.value = csrfToken);
-        displayError('Unable to connect to the server. Using fallback mode.');
+        document.querySelectorAll('[name="csrf_token"]').forEach(input => {
+            if (input) input.value = csrfToken;
+        });
+        displayError('Running in offline mode due to server issues.');
     }
 }
 
@@ -69,6 +76,7 @@ function navigateToSection(sectionId) {
     console.log(`Navigating to ${sectionId}`);
     const section = document.getElementById(sectionId);
     if (section) section.scrollIntoView({ behavior: 'smooth' });
+    else console.error(`Section ${sectionId} not found`);
 }
 
 // Smooth scrolling for nav links
@@ -83,7 +91,12 @@ document.querySelectorAll('.nav-link').forEach(anchor => {
 // Search Functionality
 function performGlobalSearch() {
     console.log('Performing search');
-    const query = document.getElementById('global-search')?.value.toLowerCase().trim();
+    const searchInput = document.getElementById('global-search');
+    if (!searchInput) {
+        console.error('Search input not found');
+        return;
+    }
+    const query = searchInput.value.toLowerCase().trim();
     if (!query) {
         alert('Please enter a search term.');
         return;
@@ -105,6 +118,10 @@ async function handleRegistration(event) {
     event.preventDefault();
     console.log('Handling registration');
     const form = event.target;
+    if (!form) {
+        console.error('Registration form not found');
+        return;
+    }
     const formData = new FormData(form);
     const data = Object.fromEntries(formData);
 
@@ -120,6 +137,14 @@ async function handleRegistration(event) {
         return;
     }
 
+    const regForm = document.getElementById('reg-form');
+    const regResponse = document.getElementById('registration-response');
+    if (!regForm || !regResponse) {
+        console.error('Registration elements not found');
+        displayError('Registration unavailable. Please try again later.');
+        return;
+    }
+
     try {
         const response = await fetch(`${API_BASE_URL}/register`, {
             method: 'POST',
@@ -129,18 +154,14 @@ async function handleRegistration(event) {
             },
             body: JSON.stringify(data)
         });
-        const text = await response.text();
-        console.log('Registration response:', { status: response.status, text });
-        if (!response.ok) {
-            throw new Error(`HTTP error! Status: ${response.status}, Text: ${text}`);
-        }
-        const result = JSON.parse(text);
-        document.getElementById('reg-form').classList.add('hidden');
-        document.getElementById('registration-response').classList.remove('hidden');
+        if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+        const result = await response.json();
+        regForm.classList.add('hidden');
+        regResponse.classList.remove('hidden');
     } catch (error) {
         console.error('Registration error:', error.message);
-        document.getElementById('reg-form').classList.add('hidden');
-        document.getElementById('registration-response').classList.remove('hidden');
+        regForm.classList.add('hidden');
+        regResponse.classList.remove('hidden');
         displayError('Registration submitted successfully (offline mode).');
     }
 }
@@ -157,6 +178,7 @@ function closeResponse() {
         regFormElement.reset();
     } else {
         console.error('Registration elements not found');
+        displayError('Unable to close response. Please refresh the page.');
     }
 }
 
@@ -171,13 +193,9 @@ async function makeCall() {
                 'X-CSRF-Token': csrfToken
             }
         });
-        const text = await response.text();
-        console.log('Call response:', { status: response.status, text });
-        if (!response.ok) {
-            throw new Error(`HTTP error! Status: ${response.status}, Text: ${text}`);
-        }
-        const result = JSON.parse(text);
-        alert(result.message);
+        if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+        const result = await response.json();
+        alert(result.message || 'Call scheduled successfully!');
     } catch (error) {
         console.error('Call error:', error.message);
         alert('Call scheduled successfully (offline mode).');
@@ -189,9 +207,20 @@ async function scheduleMeeting(event) {
     event.preventDefault();
     console.log('Scheduling meeting');
     const form = event.target;
+    if (!form) {
+        console.error('Schedule form not found');
+        return;
+    }
     const formData = new FormData(form);
     const data = Object.fromEntries(formData);
     console.log('Meeting data:', data);
+
+    const meetingResponse = document.getElementById('meeting-response');
+    if (!meetingResponse) {
+        console.error('Meeting response element not found');
+        return;
+    }
+
     try {
         const response = await fetch(`${API_BASE_URL}/schedule`, {
             method: 'POST',
@@ -201,17 +230,13 @@ async function scheduleMeeting(event) {
             },
             body: JSON.stringify(data)
         });
-        const text = await response.text();
-        console.log('Meeting response:', { status: response.status, text });
-        if (!response.ok) {
-            throw new Error(`HTTP error! Status: ${response.status}, Text: ${text}`);
-        }
-        const result = JSON.parse(text);
-        document.getElementById('meeting-response').innerText = result.message;
+        if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+        const result = await response.json();
+        meetingResponse.innerText = result.message || 'Meeting scheduled successfully!';
         form.reset();
     } catch (error) {
         console.error('Meeting error:', error.message);
-        document.getElementById('meeting-response').innerText = 'Meeting scheduled successfully (offline mode).';
+        meetingResponse.innerText = 'Meeting scheduled successfully (offline mode).';
         form.reset();
         displayError('Meeting scheduled in offline mode.');
     }
@@ -222,9 +247,20 @@ async function sendText(event) {
     event.preventDefault();
     console.log('Sending message');
     const form = event.target;
+    if (!form) {
+        console.error('Text form not found');
+        return;
+    }
     const formData = new FormData(form);
     const data = Object.fromEntries(formData);
     console.log('Message data:', data);
+
+    const textResponse = document.getElementById('text-response');
+    if (!textResponse) {
+        console.error('Text response element not found');
+        return;
+    }
+
     try {
         const response = await fetch(`${API_BASE_URL}/text`, {
             method: 'POST',
@@ -234,17 +270,13 @@ async function sendText(event) {
             },
             body: JSON.stringify(data)
         });
-        const text = await response.text();
-        console.log('Message response:', { status: response.status, text });
-        if (!response.ok) {
-            throw new Error(`HTTP error! Status: ${response.status}, Text: ${text}`);
-        }
-        const result = JSON.parse(text);
-        document.getElementById('text-response').innerHTML = `${result.message}<br><span class="text-yellow-600">WeddingPal: Thanks for your message! We’ll get back to you soon.</span>`;
+        if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+        const result = await response.json();
+        textResponse.innerHTML = `${result.message || 'Message sent!'}<br><span class="text-yellow-600">WeddingPal: Thanks for your message! We’ll get back to you soon.</span>`;
         form.reset();
     } catch (error) {
         console.error('Message error:', error.message);
-        document.getElementById('text-response').innerHTML = `<span class="text-yellow-600">WeddingPal: Thanks for your message! We’ll get back to you soon (offline mode).</span>`;
+        textResponse.innerHTML = `<span class="text-yellow-600">WeddingPal: Thanks for your message! We’ll get back to you soon (offline mode).</span>`;
         form.reset();
         displayError('Message sent in offline mode.');
     }
@@ -255,9 +287,20 @@ async function submitFAQ(event) {
     event.preventDefault();
     console.log('Submitting FAQ');
     const form = event.target;
+    if (!form) {
+        console.error('FAQ form not found');
+        return;
+    }
     const formData = new FormData(form);
     const data = Object.fromEntries(formData);
     console.log('FAQ data:', data);
+
+    const faqResponse = document.getElementById('faq-response');
+    if (!faqResponse) {
+        console.error('FAQ response element not found');
+        return;
+    }
+
     try {
         const response = await fetch(`${API_BASE_URL}/faq`, {
             method: 'POST',
@@ -267,17 +310,13 @@ async function submitFAQ(event) {
             },
             body: JSON.stringify(data)
         });
-        const text = await response.text();
-        console.log('FAQ response:', { status: response.status, text });
-        if (!response.ok) {
-            throw new Error(`HTTP error! Status: ${response.status}, Text: ${text}`);
-        }
-        const result = JSON.parse(text);
-        document.getElementById('faq-response').innerText = 'Question submitted successfully!';
+        if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+        const result = await response.json();
+        faqResponse.innerText = result.message || 'Question submitted successfully!';
         form.reset();
     } catch (error) {
         console.error('FAQ error:', error.message);
-        document.getElementById('faq-response').innerText = 'Question submitted successfully (offline mode)!';
+        faqResponse.innerText = 'Question submitted successfully (offline mode)!';
         form.reset();
         displayError('FAQ submitted in offline mode.');
     }
@@ -288,6 +327,10 @@ async function submitFeedback(event) {
     event.preventDefault();
     console.log('Submitting feedback');
     const form = event.target;
+    if (!form) {
+        console.error('Feedback form not found');
+        return;
+    }
     const formData = new FormData(form);
     const data = Object.fromEntries(formData);
     console.log('Feedback data:', data);
@@ -296,6 +339,12 @@ async function submitFeedback(event) {
     const emailRegex = /[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$/;
     if (!emailRegex.test(data.email)) {
         alert('Please enter a valid email address.');
+        return;
+    }
+
+    const feedbackResponse = document.getElementById('feedback-response');
+    if (!feedbackResponse) {
+        console.error('Feedback response element not found');
         return;
     }
 
@@ -308,19 +357,16 @@ async function submitFeedback(event) {
             },
             body: JSON.stringify(data)
         });
-        const text = await response.text();
-        console.log('Feedback response:', { status: response.status, text });
-        if (!response.ok) {
-            throw new Error(`HTTP error! Status: ${response.status}, Text: ${text}`);
-        }
-        const result = JSON.parse(text);
-        document.getElementById('feedback-response').innerText = 'Feedback submitted successfully!';
+        if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+        const result = await response.json();
+        feedbackResponse.innerText = result.message || 'Feedback submitted successfully!';
         form.reset();
         fetchFeedbacks();
     } catch (error) {
         console.error('Feedback error:', error.message);
-        document.getElementById('feedback-response').innerText = 'Feedback submitted successfully (offline mode)!';
+        feedbackResponse.innerText = 'Feedback submitted successfully (offline mode)!';
         form.reset();
+        fetchFeedbacks();
         displayError('Feedback submitted in offline mode.');
     }
 }
@@ -328,38 +374,35 @@ async function submitFeedback(event) {
 // Fetch and Display Feedbacks
 async function fetchFeedbacks() {
     console.log('Fetching feedbacks');
+    const feedbackList = document.getElementById('feedback-list');
+    if (!feedbackList) {
+        console.error('Feedback list element not found');
+        return;
+    }
+
     try {
         const response = await fetch(`${API_BASE_URL}/feedbacks`);
-        const text = await response.text();
-        console.log('Feedbacks response:', { status: response.status, text });
-        if (!response.ok) {
-            throw new Error(`HTTP error! Status: ${response.status}, Text: ${text}`);
-        }
-        const feedbacks = JSON.parse(text);
-        const feedbackList = document.getElementById('feedback-list');
-        if (feedbackList) {
-            feedbackList.innerHTML = '';
-            feedbacks.forEach(feedback => {
-                const div = document.createElement('div');
-                div.className = 'bg-white p-4 rounded-lg shadow-lg';
-                div.innerHTML = `
-                    <p class="text-gray-800 text-lg">"${feedback.feedback}"</p>
-                    <p class="text-gray-600 text-sm mt-2">— ${feedback.name} (${feedback.email})</p>
-                `;
-                feedbackList.appendChild(div);
-            });
-        }
+        if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+        const feedbacks = await response.json();
+        feedbackList.innerHTML = '';
+        feedbacks.forEach(feedback => {
+            const div = document.createElement('div');
+            div.className = 'bg-white p-4 rounded-lg shadow-lg';
+            div.innerHTML = `
+                <p class="text-gray-800 text-lg">"${feedback.feedback}"</p>
+                <p class="text-gray-600 text-sm mt-2">— ${feedback.name} (${feedback.email})</p>
+            `;
+            feedbackList.appendChild(div);
+        });
     } catch (error) {
         console.error('Error fetching feedbacks:', error.message);
-        const feedbackList = document.getElementById('feedback-list');
-        if (feedbackList) {
-            feedbackList.innerHTML = `
-                <div class="bg-white p-4 rounded-lg shadow-lg">
-                    <p class="text-gray-800 text-lg">"Great service!"</p>
-                    <p class="text-gray-600 text-sm mt-2">— John Doe (john@example.com)</p>
-                </div>
-            `;
-        }
+        feedbackList.innerHTML = `
+            <div class="bg-white p-4 rounded-lg shadow-lg">
+                <p class="text-gray-800 text-lg">"Great service!"</p>
+                <p class="text-gray-600 text-sm mt-2">— John Doe (john@example.com)</p>
+            </div>
+        `;
+        displayError('Feedbacks loaded in offline mode.');
     }
 }
 
@@ -444,6 +487,7 @@ function showVenue(type) {
     const venueDetailsDiv = document.getElementById("venue-details");
     if (!venueSection || !venueImagesDiv || !venueDetailsDiv) {
         console.error('Venue elements not found');
+        displayError('Venue details unavailable. Please try again later.');
         return;
     }
 

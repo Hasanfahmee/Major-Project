@@ -174,19 +174,20 @@
             width: 150px;
             height: 150px;
         }
-        /* Fix for double arrows in slideshow */
         .swiper-button-next, .swiper-button-prev {
             color: white;
             z-index: 10;
         }
-        .swiper-button-next.swiper-button-disabled, .swiper-button-prev.swiper-button-disabled {
-            opacity: 0.35;
-        }
-        .swiper-container:not(.social-media-swiper) .swiper-button-next:nth-child(n+2),
-        .swiper-container:not(.social-media-swiper) .swiper-button-prev:nth-child(n+2) {
+        .social-media-swiper .swiper-button-next:not(:first-child),
+        .social-media-swiper .swiper-button-prev:not(:first-child) {
             display: none;
         }
-        /* Mobile Responsiveness */
+        .swiper-pagination {
+            bottom: 10px;
+        }
+        section:not(.social-media-swiper) .swiper-pagination {
+            display: none !important;
+        }
         @media (max-width: 640px) {
             .container {
                 padding: 0 10px;
@@ -209,7 +210,7 @@
             #global-search {
                 width: 100%;
             }
-            .swiper-container {
+            .home-swiper {
                 height: 300px;
             }
             .swiper-slide p {
@@ -301,7 +302,7 @@
 
     <!-- Hero Section with Swiper.js -->
     <section id="home" class="relative text-center py-1">
-        <div class="swiper-container w-full h-[500px]">
+        <div class="home-swiper w-full h-[500px]">
             <div class="swiper-wrapper">
                 <div class="swiper-slide relative">
                     <img src="images/image 4.png" alt="Bride and groom on a balcony" class="w-full h-full object-cover">
@@ -316,9 +317,6 @@
                     <p class="absolute bottom-5 left-5 text-white text-3xl font-serif italic bg-black bg-opacity-50 px-4 py-2 rounded-lg">Cherishing every special moment</p>
                 </div>
             </div>
-            <div class="swiper-button-next text-white"></div>
-            <div class="swiper-button-prev text-white"></div>
-            <div class="swiper-pagination"></div>
         </div>
     </section>
 
@@ -407,7 +405,7 @@
                 </div>
                 <div class="max-w-sm bg-white rounded-2xl shadow-lg p-6 text-center">
                     <p class="text-gray-600 text-lg">
-                        "As a wedding photographer, I've worked with many planners, but this one truly stood out! The seamless coordination, beautiful setups, and attention to detail made capturing every moment effortless. Highly recommended!"
+                        "As a wedding photographer, I've tried many planners, but this one truly stood out! The seamless coordination, beautiful setups, and attention to detail made capturing every moment effortless. Highly recommended!"
                     </p>
                     <div class="flex items-center justify-center mt-4">
                         <img src="images/image ow3.png" alt="Reggie Wilson" class="w-12 h-12 rounded-full border-2 border-gray-300">
@@ -614,11 +612,11 @@
                 </select>
                 <select name="time" required class="w-full p-2 mb-2 rounded bg-white text-black">
                     <option value="" disabled selected>Time</option>
-                    <option value="9:00 AM">9:00 AM</option>
-                    <option value="11:00 AM">11:00 AM</option>
-                    <option value="1:00 PM">1:00 PM</option>
-                    <option value="3:00 PM">3:00 PM</option>
-                    <option value="5:00 PM">5:00 PM</option>
+                    <option value="9:00 AM to 10:00AM">9:00 AM to 10:00AM</option>
+                    <option value="11:00 AM to 12:00AM">11:00 AM to 12:00AM </option>
+                    <option value="1:00 PM to 2:00PM">1:00 PM to 2:00PM</option>
+                    <option value="3:00 PM to 4:00PM">3:00 PM to 4:00PM </option>
+                    <option value="5:00 PM to 6:00PM"> 5:00 PM to 6:00PM</option>
                 </select>
                 <select name="month" required class="w-full p-2 mb-2 rounded bg-white text-black">
                     <option value="" disabled selected>Month</option>
@@ -742,15 +740,15 @@
             </button>
         </div>
         <div id="chatbot-messages"></div>
-        <form id="chatbot-form" onsubmit="sendChatbotMessage(event)" novalidate>
+        <form id="chatbot-form" onsubmit="sendChatbotMessage(event)">
             <div class="flex">
                 <input type="text" id="chatbot-input" name="message" placeholder="Ask about WeddingPal..." required>
-                <button type="submit" class="bg-yellow-600 text-white py-2 px-4rounded-r-lg hover:bg-yellow-700 transition">Send</button>
+                <button type="submit" class="bg-yellow-600 text-white py-2 px-4 rounded-r-lg hover:bg-yellow-700 transition">Send</button>
             </div>
-               </form>
+        </form>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/swiper/swiper-bundle.min.js"></script>
-    <script src="script.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/swiper/swiper-bundle.min.js"></script>
+<script src="script.js"></script>
 </body>
 </html>

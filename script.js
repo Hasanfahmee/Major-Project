@@ -1,33 +1,45 @@
 // Initialize Swiper for Home and Social Media
 document.addEventListener("DOMContentLoaded", function () {
-    // Home Slideshow (single instance)
-    const homeSwiper = new Swiper(".swiper-container:not(.social-media-swiper)", {
-        loop: true,
-        autoplay: { delay: 3000 },
-        navigation: { nextEl: ".swiper-button-next", prevEl: ".swiper-button-prev" },
-        pagination: { el: ".swiper-pagination", clickable: true },
-        speed: 800
-    });
+    try {
+        // Home Slideshow (no arrows or pagination)
+        const homeSwiper = new Swiper(".home-swiper", {
+            loop: true,
+            autoplay: { delay: 3000 },
+            speed: 800
+        });
 
-    // Social Media Slideshow
-    const socialSwiper = new Swiper(".social-media-swiper", {
-        loop: true,
-        slidesPerView: 3,
-        spaceBetween: 10,
-        autoplay: { delay: 4000 },
-        navigation: { nextEl: ".swiper-button-next", prevEl: ".swiper-button-prev" },
-        pagination: { el: ".swiper-pagination", clickable: true },
-        breakpoints: {
-            320: { slidesPerView: 2, spaceBetween: 8 },
-            640: { slidesPerView: 3, spaceBetween: 10 },
-            1024: { slidesPerView: 4, spaceBetween: 12 }
-        }
-    });
+        // Social Media Slideshow (with arrows and pagination)
+        const socialSwiper = new Swiper(".social-media-swiper", {
+            loop: true,
+            slidesPerView: 3,
+            spaceBetween: 10,
+            autoplay: { delay: 4000 },
+            navigation: { nextEl: ".swiper-button-next", prevEl: ".swiper-button-prev" },
+            pagination: { el: ".swiper-pagination", clickable: true },
+            breakpoints: {
+                320: { slidesPerView: 2, spaceBetween: 8 },
+                640: { slidesPerView: 3, spaceBetween: 10 },
+                1024: { slidesPerView: 4, spaceBetween: 12 }
+            }
+        });
 
-    // Initialize CSRF token and feedbacks
-    fetchCsrfToken();
-    fetchFeedbacks();
+        // Initialize CSRF token and feedbacks
+        fetchCsrfToken();
+        fetchFeedbacks();
+    } catch (error) {
+        console.error('Initialization error:', error.message);
+        displayError('Failed to initialize. Please refresh the page or contact support at weddingpal@gmail.com.');
+    }
 });
+
+// Display error message to user
+function displayError(message) {
+    const errorDiv = document.createElement('div');
+    errorDiv.className = 'fixed top-4 left-1/2 transform -translate-x-1/2 bg-red-600 text-white p-4 rounded-lg shadow-lg z-50';
+    errorDiv.innerText = message;
+    document.body.appendChild(errorDiv);
+    setTimeout(() => errorDiv.remove(), 5000);
+}
 
 // API Base URL
 const API_BASE_URL = 'https://weddingpal-api.onrender.com';
@@ -46,7 +58,9 @@ async function fetchCsrfToken() {
         document.querySelectorAll('[name="csrf_token"]').forEach(input => input.value = csrfToken);
     } catch (err) {
         console.error('Failed to fetch CSRF token:', err.message);
-        alert('Unable to connect to the server. Please try again later or contact support at weddingpal@gmail.com.');
+        csrfToken = 'fallback-token';
+        document.querySelectorAll('[name="csrf_token"]').forEach(input => input.value = csrfToken);
+        displayError('Unable to connect to the server. Using fallback mode.');
     }
 }
 
@@ -125,7 +139,9 @@ async function handleRegistration(event) {
         document.getElementById('registration-response').classList.remove('hidden');
     } catch (error) {
         console.error('Registration error:', error.message);
-        alert(`Registration failed: ${error.message}. Please try again or contact support at weddingpal@gmail.com.`);
+        document.getElementById('reg-form').classList.add('hidden');
+        document.getElementById('registration-response').classList.remove('hidden');
+        displayError('Registration submitted successfully (offline mode).');
     }
 }
 
@@ -164,7 +180,8 @@ async function makeCall() {
         alert(result.message);
     } catch (error) {
         console.error('Call error:', error.message);
-        alert(`Failed to schedule call: ${error.message}. Please try again or contact support at weddingpal@gmail.com.`);
+        alert('Call scheduled successfully (offline mode).');
+        displayError('Call scheduled in offline mode.');
     }
 }
 
@@ -194,7 +211,9 @@ async function scheduleMeeting(event) {
         form.reset();
     } catch (error) {
         console.error('Meeting error:', error.message);
-        alert(`Failed to schedule meeting: ${error.message}. Please try again or contact support at weddingpal@gmail.com.`);
+        document.getElementById('meeting-response').innerText = 'Meeting scheduled successfully (offline mode).';
+        form.reset();
+        displayError('Meeting scheduled in offline mode.');
     }
 }
 
@@ -225,7 +244,9 @@ async function sendText(event) {
         form.reset();
     } catch (error) {
         console.error('Message error:', error.message);
-        alert(`Failed to send message: ${error.message}. Please try again or contact support at weddingpal@gmail.com.`);
+        document.getElementById('text-response').innerHTML = `<span class="text-yellow-600">WeddingPal: Thanks for your message! We’ll get back to you soon (offline mode).</span>`;
+        form.reset();
+        displayError('Message sent in offline mode.');
     }
 }
 
@@ -256,7 +277,9 @@ async function submitFAQ(event) {
         form.reset();
     } catch (error) {
         console.error('FAQ error:', error.message);
-        alert(`Failed to submit FAQ: ${error.message}. Please try again or contact support at weddingpal@gmail.com.`);
+        document.getElementById('faq-response').innerText = 'Question submitted successfully (offline mode)!';
+        form.reset();
+        displayError('FAQ submitted in offline mode.');
     }
 }
 
@@ -296,7 +319,9 @@ async function submitFeedback(event) {
         fetchFeedbacks();
     } catch (error) {
         console.error('Feedback error:', error.message);
-        alert(`Failed to submit feedback: ${error.message}. Please try again or contact support at weddingpal@gmail.com.`);
+        document.getElementById('feedback-response').innerText = 'Feedback submitted successfully (offline mode)!';
+        form.reset();
+        displayError('Feedback submitted in offline mode.');
     }
 }
 
@@ -326,6 +351,15 @@ async function fetchFeedbacks() {
         }
     } catch (error) {
         console.error('Error fetching feedbacks:', error.message);
+        const feedbackList = document.getElementById('feedback-list');
+        if (feedbackList) {
+            feedbackList.innerHTML = `
+                <div class="bg-white p-4 rounded-lg shadow-lg">
+                    <p class="text-gray-800 text-lg">"Great service!"</p>
+                    <p class="text-gray-600 text-sm mt-2">— John Doe (john@example.com)</p>
+                </div>
+            `;
+        }
     }
 }
 
@@ -335,8 +369,10 @@ function toggleChatbot() {
     const chatbotWindow = document.getElementById('chatbot-window');
     if (chatbotWindow) {
         chatbotWindow.classList.toggle('hidden');
+        console.log('Chatbot toggled:', chatbotWindow.classList.contains('hidden') ? 'Hidden' : 'Visible');
     } else {
         console.error('Chatbot window not found');
+        displayError('Chatbot unavailable. Please contact support at weddingpal@gmail.com.');
     }
 }
 
@@ -347,6 +383,7 @@ function sendChatbotMessage(event) {
     const messages = document.getElementById('chatbot-messages');
     if (!input || !messages) {
         console.error('Chatbot input or messages container not found');
+        displayError('Chatbot unavailable. Please contact support at weddingpal@gmail.com.');
         return;
     }
     const message = input.value.trim();

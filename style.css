@@ -57,3 +57,93 @@ nav a:hover {
     border-radius: 1rem; /* Equivalent to rounded-lg */
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Equivalent to shadow-lg */
   }
+  /* Mobile Responsiveness */
+@media (max-width: 640px) {
+    .container {
+        padding: 0 10px;
+    }
+    header .container {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    nav {
+        margin-top: 1rem;
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    nav a {
+        margin: 0.5rem 0;
+    }
+    .relative {
+        width: 100%;
+    }
+    #global-search {
+        width: 100%;
+    }
+    .swiper-container {
+        height: 300px;
+    }
+    .swiper-slide p {
+        font-size: 1rem;
+        padding: 8px;
+    }
+    .text-5xl {
+        font-size: 2rem;
+    }
+    .text-3xl {
+        font-size: 1.5rem;
+    }
+    .text-2xl {
+        font-size: 1.25rem;
+    }
+    .grid-cols-2, .grid-cols-3 {
+        grid-template-columns: 1fr;
+    }
+    .flex-row {
+        flex-direction: column;
+    }
+    /* Replaced md\:w-1\/2 with standard CSS */
+    .md-w-1-2 {
+        width: 100%;
+    }
+    /* Replaced md\:pl-8 with standard CSS */
+    .md-pl-8 {
+        padding-left: 0;
+    }
+    .space-x-4 {
+        margin-top: 1rem;
+        flex-direction: column;
+        align-items: center;
+    }
+    .max-w-sm {
+        width: 100%;
+    }
+    #reg-form {
+        width: 100%;
+    }
+    #registration-response {
+        width: 95%;
+    }
+    #chatbot-window {
+        width: 90%;
+        right: 5%;
+    }
+    .card {
+        margin-bottom: 1rem;
+    }
+    .transparent-div {
+        width: 100%;
+    }
+    img.w-32 {
+        width: 100px;
+        height: 100px;
+    }
+    .venue-button::after {
+        font-size: 10px;
+        bottom: -15px;
+    }
+    .social-media-swiper .swiper-slide {
+        width: 120px;
+        height: 120px;
+    }
+}

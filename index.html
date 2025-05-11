@@ -3,21 +3,32 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <!-- Content Security Policy -->
+    <meta http-equiv="Content-Security-Policy" content="
+        default-src 'self';
+        script-src 'self' https://cdn.tailwindcss.com https://cdn.jsdelivr.net https://cdnjs.cloudflare.com;
+        style-src 'self' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://fonts.googleapis.com 'unsafe-inline';
+        img-src 'self' https://weddingpal.onrender.com https://*.supabase.co data:;
+        font-src 'self' https://fonts.gstatic.com;
+        connect-src 'self' https://weddingpal-api.onrender.com;
+        frame-src 'none';
+        object-src 'none';
+    ">
     <title>WeddingPal</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
-    <!-- Fonts: Roboto for body, Sacramento as placeholder for Good Vibrations Script -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" integrity="sha512-Avb2QiuDEEvB4bZJYdft2mNjVShBftLdPG8FJ0V7irTLQ8Uo0qcPxh4Plq7G5tGm0rU+1SPhVotteLpBERet7yg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&family=Sacramento&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper/swiper-bundle.min.css" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <style>
-        /* From your style.css */
         body {
             font-family: 'Roboto', sans-serif;
+            margin: 0;
+            padding: 0;
         }
 
         .script-font {
-            font-family: 'Sacramento', cursive; /* Placeholder for Good Vibrations Script */
+            font-family: 'Sacramento', cursive;
         }
 
         nav a {
@@ -72,10 +83,10 @@
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
 
-        /* Additional styles from previous iteration */
         .nav-link { color: white; }
         .nav-link:hover { color: #FFDD00; }
         .hidden { display: none; }
+
         #registration-response {
             position: fixed;
             top: 50%;
@@ -89,12 +100,14 @@
             width: 90%;
             max-width: 500px;
         }
+
         #chatbot {
             position: fixed;
             bottom: 20px;
             right: 20px;
             z-index: 1000;
         }
+
         #chatbot-window {
             position: fixed;
             bottom: 80px;
@@ -107,32 +120,38 @@
             overflow: hidden;
             display: none;
         }
+
         #chatbot-messages {
             max-height: 250px;
             overflow-y: auto;
             padding: 15px;
             background: #f9f9f9;
         }
+
         #chatbot-messages p {
             margin: 8px 0;
             padding: 8px 12px;
             border-radius: 8px;
         }
+
         #chatbot-messages .user-message {
             background: #fef3c7;
             margin-left: 20%;
             text-align: right;
         }
+
         #chatbot-messages .bot-message {
             background: #fee2e2;
             margin-right: 20%;
         }
+
         #chatbot-form {
             display: flex;
             border-top: 1px solid #e5e5e5;
             padding: 10px;
             background: white;
         }
+
         #chatbot-input {
             flex-grow: 1;
             padding: 8px;
@@ -140,11 +159,51 @@
             border-radius: 8px;
             margin-right: 8px;
         }
+
         #chatbot-input::placeholder {
             color: #9ca3af;
         }
+
         ::placeholder {
             color: #9ca3af;
+        }
+
+        /* Mobile Responsiveness */
+        @media (max-width: 640px) {
+            .container { padding: 0 10px; }
+            .swiper-container { height: 300px; }
+            .text-5xl { font-size: 2rem; }
+            .text-3xl { font-size: 1.5rem; }
+            .text-2xl { font-size: 1.25rem; }
+            .grid-cols-2, .grid-cols-3 { grid-template-columns: 1fr; }
+            #chatbot-window { width: 90%; right: 5%; }
+            #registration-response { width: 95%; }
+            .swiper-slide p { font-size: 1rem; }
+            .flex-row { flex-direction: column; }
+            .md\\:w-1\\2 { width: 100%; }
+            .md\\:pl-8 { padding-left: 0; }
+            .space-x-4 { margin-top: 1rem; }
+            .max-w-sm { width: 100%; }
+        }
+
+        /* Form Validation Styles */
+        input:invalid, textarea:invalid {
+            border-color: #ff6f61;
+        }
+
+        input:valid, textarea:valid {
+            border-color: #10b981;
+        }
+
+        .error-message {
+            color: #ff6f61;
+            font-size: 0.875rem;
+            margin-top: 0.25rem;
+            display: none;
+        }
+
+        input:invalid + .error-message, textarea:invalid + .error-message {
+            display: block;
         }
     </style>
 </head>
@@ -155,17 +214,17 @@
     <div class="container mx-auto flex justify-between items-center py-4 px-6">
         <div class="text-2xl script-font">WeddingPal</div>
         <nav class="space-x-4">
-            <a href="#home" class="nav-link hover:text-gray-300">HOME</a>
-            <a href="#about" class="nav-link hover:text-gray-300">ABOUT US</a>
-            <a href="#ratings" class="nav-link hover:text-gray-300">RATINGS</a>
-            <a href="#venues" class="nav-link hover:text-gray-300">VENUES</a>
-            <a href="#faq" class="nav-link hover:text-gray-300">FAQ</a>
-            <a href="#feedbacks" class="nav-link hover:text-gray-300">FEEDBACKS</a>
-            <a href="#footer" class="nav-link hover:text-gray-300">CONTACT</a>
+            <a href="#home" class="nav-link hover:text-gray-300" aria-label="Home">HOME</a>
+            <a href="#about" class="nav-link hover:text-gray-300" aria-label="About Us">ABOUT US</a>
+            <a href="#ratings" class="nav-link hover:text-gray-300" aria-label="Ratings">RATINGS</a>
+            <a href="#venues" class="nav-link hover:text-gray-300" aria-label="Venues">VENUES</a>
+            <a href="#faq" class="nav-link hover:text-gray-300" aria-label="FAQ">FAQ</a>
+            <a href="#feedbacks" class="nav-link hover:text-gray-300" aria-label="Feedbacks">FEEDBACKS</a>
+            <a href="#footer" class="nav-link hover:text-gray-300" aria-label="Contact">CONTACT</a>
         </nav>
         <div class="relative">
-            <input type="text" id="global-search" placeholder="Search..." class="px-4 py-2 pr-10 rounded-md text-black focus:outline-none">
-            <button onclick="performGlobalSearch()" class="absolute right-3 top-2 text-gray-600 hover:text-gray-800">
+            <input type="text" id="global-search" placeholder="Search..." class="px-4 py-2 pr-10 rounded-md text-black focus:outline-none" aria-label="Search">
+            <button onclick="performGlobalSearch()" class="absolute right-3 top-2 text-gray-600 hover:text-gray-800" aria-label="Search Button">
                 <i class="fas fa-search"></i>
             </button>
         </div>
@@ -203,21 +262,6 @@
         <div class="swiper-pagination"></div>
     </div>
 </section>
-
-<!-- Swiper Initialization -->
-<script>
-    document.addEventListener("DOMContentLoaded", function () {
-        new Swiper(".swiper-container", {
-            loop: true,
-            autoplay: { delay: 3000 },
-            navigation: { nextEl: ".swiper-button-next", prevEl: ".swiper-button-prev" },
-            pagination: { el: ".swiper-pagination", clickable: true },
-            effect: 'fade',
-            speed: 800
-        });
-        fetchFeedbacks();
-    });
-</script>
 
 <!-- Planning Section -->
 <section id="about" class="bg-red-800 text-white text-center py-8">
@@ -376,22 +420,26 @@
     <div class="relative container mx-auto flex justify-between items-center px-6">
         <div id="reg-form" class="bg-white text-black p-6 rounded-lg shadow-lg">
             <h2 class="text-2xl mb-4">Join with WeddingPal to make the Dream Wedding</h2>
-            <form id="registration-form" onsubmit="handleRegistration(event)">
+            <form id="registration-form" onsubmit="handleRegistration(event)" novalidate>
                 <div class="mb-4">
                     <label for="aboutwed" class="block">About Wedding</label>
-                    <input type="text" id="aboutwed" name="aboutwed" class="w-full p-2 border border-gray-300 rounded" required>
+                    <input type="text" id="aboutwed" name="aboutwed" class="w-full p-2 border border-gray-300 rounded" required aria-describedby="aboutwed-error">
+                    <span id="aboutwed-error" class="error-message">Please enter wedding details.</span>
                 </div>
                 <div class="mb-4">
                     <label for="name" class="block">Name</label>
-                    <input type="text" id="name" name="name" class="w-full p-2 border border-gray-300 rounded" required>
+                    <input type="text" id="name" name="name" class="w-full p-2 border border-gray-300 rounded" required pattern="[A-Za-z\s]{1,50}" aria-describedby="name-error">
+                    <span id="name-error" class="error-message">Name must be letters and spaces only (max 50 characters).</span>
                 </div>
                 <div class="mb-4">
                     <label for="email" class="block">Email ID</label>
-                    <input type="email" id="email" name="email" class="w-full p-2 border border-gray-300 rounded" required>
+                    <input type="email" id="email" name="email" class="w-full p-2 border border-gray-300 rounded" required pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$" aria-describedby="email-error">
+                    <span id="email-error" class="error-message">Please enter a valid email address.</span>
                 </div>
                 <div class="mb-4">
                     <label for="mobile" class="block">Mobile Number</label>
-                    <input type="text" id="mobile" name="mobile" class="w-full p-2 border border-gray-300 rounded" required>
+                    <input type="text" id="mobile" name="mobile" class="w-full p-2 border border-gray-300 rounded" required pattern="\d{10}" maxlength="10" aria-describedby="mobile-error">
+                    <span id="mobile-error" class="error-message">Mobile number must be exactly 10 digits.</span>
                 </div>
                 <div class="mb-4">
                     <label for="environment" class="block">Environment</label>
@@ -401,6 +449,7 @@
                         <label><input type="radio" name="location" value="Both"> Both</label>
                     </div>
                 </div>
+                <input type="hidden" name="csrf_token" value="DUMMY_CSRF_TOKEN">
                 <button type="submit" class="bg-red-800 text-white py-2 px-4 rounded">REGISTER</button>
             </form>
         </div>
@@ -413,13 +462,14 @@
     <button onclick="makeCall()" class="bg-yellow-600 text-white py-2 px-4 rounded mb-4">Call Me Now</button>
     <div>
         <h3 class="text-xl text-yellow-600">Schedule a Meeting</h3>
-        <form id="schedule-form" onsubmit="scheduleMeeting(event)" class="mt-2">
-            <select name="type" required class="w-full p-2 mb-2 rounded bg-white text-black">
+        <form id="schedule-form" onsubmit="scheduleMeeting(event)" novalidate>
+            <select name="type" required class="w-full p-2 mb-2 rounded bg-white text-black" aria-describedby="type-error">
                 <option value="" disabled selected>Select Meeting Type</option>
                 <option value="online">Online</option>
                 <option value="offline">In-Person</option>
             </select>
-            <select name="day" required class="w-full p-2 mb-2 rounded bg-white text-black">
+            <span id="type-error" class="error-message">Please select a meeting type.</span>
+            <select name="day" required class="w-full p-2 mb-2 rounded bg-white text-black" aria-describedby="day-error">
                 <option value="" disabled selected>Day</option>
                 <option value="Monday">Monday</option>
                 <option value="Tuesday">Tuesday</option>
@@ -429,7 +479,8 @@
                 <option value="Saturday">Saturday</option>
                 <option value="Sunday">Sunday</option>
             </select>
-            <select name="time" required class="w-full p-2 mb-2 rounded bg-white text-black">
+            <span id="day-error" class="error-message">Please select a day.</span>
+            <select name="time" required class="w-full p-2 mb-2 rounded bg-white text-black" aria-describedby="time-error">
                 <option value="" disabled selected>Time</option>
                 <option value="9:00 AM">9:00 AM</option>
                 <option value="11:00 AM">11:00 AM</option>
@@ -437,7 +488,8 @@
                 <option value="3:00 PM">3:00 PM</option>
                 <option value="5:00 PM">5:00 PM</option>
             </select>
-            <select name="month" required class="w-full p-2 mb-2 rounded bg-white text-black">
+            <span id="time-error" class="error-message">Please select a time.</span>
+            <select name="month" required class="w-full p-2 mb-2 rounded bg-white text-black" aria-describedby="month-error">
                 <option value="" disabled selected>Month</option>
                 <option value="January">January</option>
                 <option value="February">February</option>
@@ -452,14 +504,18 @@
                 <option value="November">November</option>
                 <option value="December">December</option>
             </select>
+            <span id="month-error" class="error-message">Please select a month.</span>
+            <input type="hidden" name="csrf_token" value="DUMMY_CSRF_TOKEN">
             <button type="submit" class="bg-yellow-600 text-white py-2 px-4 rounded">Schedule Meeting</button>
         </form>
     </div>
     <div id="meeting-response" class="mt-4 text-yellow-600"></div>
     <div class="mt-4">
         <h3 class="text-xl text-yellow-600">Send WeddingPal a Message</h3>
-        <form id="text-form" onsubmit="sendText(event)" class="mt-2">
-            <textarea name="message" placeholder="Type your message..." required class="w-full p-2 rounded bg-white text-black"></textarea>
+        <form id="text-form" onsubmit="sendText(event)" novalidate>
+            <textarea name="message" placeholder="Type your message..." required class="w-full p-2 rounded bg-white text-black" aria-describedby="message-error"></textarea>
+            <span id="message-error" class="error-message">Please enter a message.</span>
+            <input type="hidden" name="csrf_token" value="DUMMY_CSRF_TOKEN">
             <button type="submit" class="bg-yellow-600 text-white py-2 px-4 rounded mt-2">Send Message</button>
         </form>
         <div id="text-response" class="mt-4 text-yellow-600"></div>
@@ -499,8 +555,10 @@
         </div>
     </div>
     <div class="mt-6 flex flex-col items-center">
-        <form id="faq-form" onsubmit="submitFAQ(event)" class="w-full max-w-sm">
-            <textarea id="new-question" name="question" placeholder="Ask a new question..." class="px-4 py-2 rounded-md text-black focus:outline-none w-full mt-4" required></textarea>
+        <form id="faq-form" onsubmit="submitFAQ(event)" novalidate>
+            <textarea id="new-question" name="question" placeholder="Ask a new question..." class="px-4 py-2 rounded-md text-black focus:outline-none w-full mt-4" required aria-describedby="question-error"></textarea>
+            <span id="question-error" class="error-message">Please enter a question.</span>
+            <input type="hidden" name="csrf_token" value="DUMMY_CSRF_TOKEN">
             <button type="submit" class="bg-yellow-600 text-white py-2 px-4 rounded mt-4">Submit Question</button>
         </form>
         <div id="faq-response" class="mt-4 text-yellow-600"></div>
@@ -511,10 +569,14 @@
 <section id="feedbacks" class="bg-red-800 text-white text-center py-8">
     <h2 class="text-5xl text-yellow-600">WeddingPal Feedbacks</h2>
     <div class="mt-6 flex flex-col items-center">
-        <form id="feedback-form" onsubmit="submitFeedback(event)" class="w-full max-w-sm">
-            <input type="text" id="feedback-name" name="name" placeholder="Your Name" class="px-4 py-2 rounded-md text-black focus:outline-none w-full mt-4" required>
-            <input type="email" id="feedback-email" name="email" placeholder="Your Email" class="px-4 py-2 rounded-md text-black focus:outline-none w-full mt-4" required>
-            <textarea id="feedback-text" name="feedback" placeholder="Your Feedback..." class="px-4 py-2 rounded-md text-black focus:outline-none w-full mt-4" required></textarea>
+        <form id="feedback-form" onsubmit="submitFeedback(event)" novalidate>
+            <input type="text" id="feedback-name" name="name" placeholder="Your Name" class="px-4 py-2 rounded-md text-black focus:outline-none w-full mt-4" required pattern="[A-Za-z\s]{1,50}" aria-describedby="feedback-name-error">
+            <span id="feedback-name-error" class="error-message">Name must be letters and spaces only (max 50 characters).</span>
+            <input type="email" id="feedback-email" name="email" placeholder="Your Email" class="px-4 py-2 rounded-md text-black focus:outline-none w-full mt-4" required pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$" aria-describedby="feedback-email-error">
+            <span id="feedback-email-error" class="error-message">Please enter a valid email address.</span>
+            <textarea id="feedback-text" name="feedback" placeholder="Your Feedback..." class="px-4 py-2 rounded-md text-black focus:outline-none w-full mt-4" required aria-describedby="feedback-text-error"></textarea>
+            <span id="feedback-text-error" class="error-message">Please enter your feedback.</span>
+            <input type="hidden" name="csrf_token" value="DUMMY_CSRF_TOKEN">
             <button type="submit" class="bg-yellow-600 text-white py-2 px-4 rounded mt-4">Submit Feedback</button>
         </form>
         <div id="feedback-response" class="mt-4 text-yellow-600"></div>
@@ -528,37 +590,38 @@
         <div class="text-2xl script-font mb-4">WeddingPal</div>
         <div class="mb-4">
             <p>CONTACT WEDDINGPAL</p>
-            <p>weddingpal@gmail.com</p>
-            <p>9611707778</p>
+            <p><a href="mailto:weddingpal@gmail.com" aria-label="Email WeddingPal">weddingpal@gmail.com</a></p>
+            <p><a href="tel:+919611707778" aria-label="Call WeddingPal">9611707778</a></p>
         </div>
         <div class="mb-4">SOCIALS</div>
         <div class="share">
-            <a href="https://facebook.com/weddingpal" class="fab fa-facebook-f mx-2 text-gray-800">@weddingpal</a>
-            <a href="https://twitter.com/weddingpal" class="fab fa-twitter mx-2 text-gray-800">@weddingpal</a>
-            <a href="https://pinterest.com/weddingpal" class="fab fa-pinterest mx-2 text-gray-800">@weddingpal</a>
-            <a href="https://linkedin.com/company/weddingpal" class="fab fa-linkedin mx-2 text-gray-800">@weddingpal</a>
-            <a href="https://instagram.com/weddingpal" class="fab fa-instagram mx-2 text-gray-800">@weddingpal</a>
+            <a href="https://facebook.com/weddingpal" class="fab fa-facebook-f mx-2 text-gray-800" aria-label="Facebook">@weddingpal</a>
+            <a href="https://twitter.com/weddingpal" class="fab fa-twitter mx-2 text-gray-800" aria-label="Twitter">@weddingpal</a>
+            <a href="https://pinterest.com/weddingpal" class="fab fa-pinterest mx-2 text-gray-800" aria-label="Pinterest">@weddingpal</a>
+            <a href="https://linkedin.com/company/weddingpal" class="fab fa-linkedin mx-2 text-gray-800" aria-label="LinkedIn">@weddingpal</a>
+            <a href="https://instagram.com/weddingpal" class="fab fa-instagram mx-2 text-gray-800" aria-label="Instagram">@weddingpal</a>
         </div>
     </div>
 </footer>
 
 <!-- Chatbot -->
 <div id="chatbot">
-    <button onclick="toggleChatbot()" class="bg-yellow-600 text-white p-4 rounded-full hover:bg-yellow-700 transition">
+    <button onclick="toggleChatbot()" class="bg-yellow-600 text-white p-4 rounded-full hover:bg-yellow-700 transition" aria-label="Toggle Chatbot">
         <i class="fas fa-robot text-xl"></i>
     </button>
 </div>
 <div id="chatbot-window" class="hidden">
     <div class="bg-red-800 text-white p-3 rounded-t-lg flex justify-between items-center">
         <h3 class="text-lg">WeddingPal Assistant</h3>
-        <button onclick="toggleChatbot()" class="text-white hover:text-yellow-600">
+        <button onclick="toggleChatbot()" class="text-white hover:text-yellow-600" aria-label="Close Chatbot">
             <i class="fas fa-times"></i>
         </button>
     </div>
     <div id="chatbot-messages"></div>
-    <form id="chatbot-form" onsubmit="sendChatbotMessage(event)">
+    <form id="chatbot-form" onsubmit="sendChatbotMessage(event)" novalidate>
         <div class="flex">
-            <input type="text" id="chatbot-input" name="message" placeholder="Ask about WeddingPal..." required>
+            <input type="text" id="chatbot-input" name="message" placeholder="Ask about WeddingPal..." required aria-describedby="chatbot-error">
+            <span id="chatbot-error" class="error-message">Please enter a message.</span>
             <button type="submit" class="bg-yellow-600 text-white py-2 px-4 rounded-r-lg hover:bg-yellow-700 transition">Send</button>
         </div>
     </form>
@@ -566,11 +629,40 @@
 
 <!-- JavaScript -->
 <script>
+    // API Base URL (Replace with your actual Web Service URL)
+    const API_BASE_URL = 'https://weddingpal-api.onrender.com';
+
+    // Simple XSS Sanitization
+    function sanitizeInput(input) {
+        const div = document.createElement('div');
+        div.textContent = input;
+        return div.innerHTML.replace(/[<>]/g, '');
+    }
+
+    // Generate CSRF Token (Dummy for now, replace with backend-generated token)
+    function getCsrfToken() {
+        return 'DUMMY_CSRF_TOKEN'; // Replace with actual token from backend
+    }
+
+    // Swiper Initialization
+    document.addEventListener("DOMContentLoaded", function () {
+        new Swiper(".swiper-container", {
+            loop: true,
+            autoplay: { delay: 3000 },
+            navigation: { nextEl: ".swiper-button-next", prevEl: ".swiper-button-prev" },
+            pagination: { el: ".swiper-pagination", clickable: true },
+            effect: 'fade',
+            speed: 800
+        });
+        fetchFeedbacks();
+    });
+
     // Navigation Helper
     function navigateToSection(sectionId) {
         console.log(`Navigating to ${sectionId}`);
         const section = document.getElementById(sectionId);
         section.scrollIntoView({ behavior: 'smooth' });
+        section.focus();
     }
 
     // Smooth scrolling for nav links
@@ -579,13 +671,14 @@
             e.preventDefault();
             const section = document.querySelector(this.getAttribute('href'));
             section.scrollIntoView({ behavior: 'smooth' });
+            section.focus();
         });
     });
 
     // Search Functionality
     function performGlobalSearch() {
         console.log('Performing search');
-        const query = document.getElementById('global-search').value.toLowerCase();
+        const query = sanitizeInput(document.getElementById('global-search').value.toLowerCase());
         const sections = document.querySelectorAll('section, footer');
         let found = false;
         sections.forEach(section => {
@@ -603,12 +696,19 @@
         event.preventDefault();
         console.log('Handling registration');
         const form = event.target;
+        if (!form.checkValidity()) {
+            form.reportValidity();
+            return;
+        }
         const formData = new FormData(form);
         const data = Object.fromEntries(formData);
+        Object.keys(data).forEach(key => {
+            data[key] = sanitizeInput(data[key]);
+        });
         console.log('Registration data:', data);
-        fetch('http://localhost:3000/register', {
+        fetch(`${API_BASE_URL}/register`, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': getCsrfToken() },
             body: JSON.stringify(data)
         })
         .then(async response => {
@@ -638,9 +738,9 @@
     // Call and Meeting Scheduling
     function makeCall() {
         console.log('Scheduling call');
-        fetch('http://localhost:3000/call', {
+        fetch(`${API_BASE_URL}/call`, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' }
+            headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': getCsrfToken() }
         })
         .then(async response => {
             const text = await response.text();
@@ -661,12 +761,19 @@
         event.preventDefault();
         console.log('Scheduling meeting');
         const form = event.target;
+        if (!form.checkValidity()) {
+            form.reportValidity();
+            return;
+        }
         const formData = new FormData(form);
         const data = Object.fromEntries(formData);
+        Object.keys(data).forEach(key => {
+            data[key] = sanitizeInput(data[key]);
+        });
         console.log('Meeting data:', data);
-        fetch('http://localhost:3000/schedule', {
+        fetch(`${API_BASE_URL}/schedule`, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': getCsrfToken() },
             body: JSON.stringify(data)
         })
         .then(async response => {
@@ -690,12 +797,19 @@
         event.preventDefault();
         console.log('Sending message');
         const form = event.target;
+        if (!form.checkValidity()) {
+            form.reportValidity();
+            return;
+        }
         const formData = new FormData(form);
         const data = Object.fromEntries(formData);
+        Object.keys(data).forEach(key => {
+            data[key] = sanitizeInput(data[key]);
+        });
         console.log('Message data:', data);
-        fetch('http://localhost:3000/text', {
+        fetch(`${API_BASE_URL}/text`, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': getCsrfToken() },
             body: JSON.stringify(data)
         })
         .then(async response => {
@@ -719,12 +833,19 @@
         event.preventDefault();
         console.log('Submitting FAQ');
         const form = event.target;
+        if (!form.checkValidity()) {
+            form.reportValidity();
+            return;
+        }
         const formData = new FormData(form);
         const data = Object.fromEntries(formData);
+        Object.keys(data).forEach(key => {
+            data[key] = sanitizeInput(data[key]);
+        });
         console.log('FAQ data:', data);
-        fetch('http://localhost:3000/faq', {
+        fetch(`${API_BASE_URL}/faq`, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': getCsrfToken() },
             body: JSON.stringify(data)
         })
         .then(async response => {
@@ -748,12 +869,19 @@
         event.preventDefault();
         console.log('Submitting feedback');
         const form = event.target;
+        if (!form.checkValidity()) {
+            form.reportValidity();
+            return;
+        }
         const formData = new FormData(form);
         const data = Object.fromEntries(formData);
+        Object.keys(data).forEach(key => {
+            data[key] = sanitizeInput(data[key]);
+        });
         console.log('Feedback data:', data);
-        fetch('http://localhost:3000/feedback', {
+        fetch(`${API_BASE_URL}/feedback`, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': getCsrfToken() },
             body: JSON.stringify(data)
         })
         .then(async response => {
@@ -776,7 +904,7 @@
     // Fetch and Display Feedbacks
     function fetchFeedbacks() {
         console.log('Fetching feedbacks');
-        fetch('http://localhost:3000/feedbacks')
+        fetch(`${API_BASE_URL}/feedbacks`)
             .then(async response => {
                 const text = await response.text();
                 console.log('Feedbacks response:', { status: response.status, text });
@@ -790,8 +918,8 @@
                     const div = document.createElement('div');
                     div.className = 'bg-white p-4 rounded-lg shadow-lg';
                     div.innerHTML = `
-                        <p class="text-gray-800 text-lg">"${feedback.feedback}"</p>
-                        <p class="text-gray-600 text-sm mt-2">— ${feedback.name} (${feedback.email})</p>
+                        <p class="text-gray-800 text-lg">"${sanitizeInput(feedback.feedback)}"</p>
+                        <p class="text-gray-600 text-sm mt-2">— ${sanitizeInput(feedback.name)} (${sanitizeInput(feedback.email)})</p>
                     `;
                     feedbackList.appendChild(div);
                 });
@@ -805,18 +933,14 @@
     function toggleChatbot() {
         console.log('Toggling chatbot');
         const chatbotWindow = document.getElementById('chatbot-window');
-        if (chatbotWindow.style.display === 'block') {
-            chatbotWindow.style.display = 'none';
-        } else {
-            chatbotWindow.style.display = 'block';
-        }
+        chatbotWindow.style.display = chatbotWindow.style.display === 'block' ? 'none' : 'block';
     }
 
     function sendChatbotMessage(event) {
         event.preventDefault();
         console.log('Sending chatbot message');
         const input = document.getElementById('chatbot-input');
-        const message = input.value.trim();
+        const message = sanitizeInput(input.value.trim());
         if (!message) {
             console.log('Empty message');
             return;
@@ -828,48 +952,28 @@
         userMessage.innerHTML = `<strong>You:</strong> ${message}`;
         messages.appendChild(userMessage);
 
-        // Predefined set of common wedding-related questions
         let response = "I'm sorry, I didn't understand that. Try asking about booking, venues, costs, cancellations, or how to contact us!";
         const lowerMessage = message.toLowerCase();
 
-        // Booking-related questions
         if (lowerMessage.includes('book') || lowerMessage.includes('planner') || lowerMessage.includes('how to start') || lowerMessage.includes('register')) {
             response = "To book a WeddingPal planner, go to the Registration section, fill out the form with your wedding details, and schedule a call or meeting to get started.";
-        }
-        // Venue-related questions
-        else if (lowerMessage.includes('venue') || lowerMessage.includes('venues') || lowerMessage.includes('location') || lowerMessage.includes('sangeet') || lowerMessage.includes('mehendi') || lowerMessage.includes('reception') || lowerMessage.includes('ceremony')) {
+        } else if (lowerMessage.includes('venue') || lowerMessage.includes('venues') || lowerMessage.includes('location') || lowerMessage.includes('sangeet') || lowerMessage.includes('mehendi') || lowerMessage.includes('reception') || lowerMessage.includes('ceremony')) {
             response = "We offer venues for Sangeet, Mehendi, Reception, and Ceremony. Check the Venues section to explore detailed designs and features for each event.";
-        }
-        // Cost-related questions
-        else if (lowerMessage.includes('cost') || lowerMessage.includes('fee') || lowerMessage.includes('price') || lowerMessage.includes('how much')) {
+        } else if (lowerMessage.includes('cost') || lowerMessage.includes('fee') || lowerMessage.includes('price') || lowerMessage.includes('how much')) {
             response = "The advance fee for booking a WeddingPal planner is mentioned in the FAQ section. For detailed pricing, please register and schedule a meeting with us.";
-        }
-        // Cancellation-related questions
-        else if (lowerMessage.includes('cancel') || lowerMessage.includes('cancellation') || lowerMessage.includes('refund')) {
+        } else if (lowerMessage.includes('cancel') || lowerMessage.includes('cancellation') || lowerMessage.includes('refund')) {
             response = "To cancel your booking, contact our customer care team at weddingpal@gmail.com or 9611707778, or use the cancellation option in our booking system.";
-        }
-        // Contact-related questions
-        else if (lowerMessage.includes('contact') || lowerMessage.includes('reach') || lowerMessage.includes('support') || lowerMessage.includes('help')) {
+        } else if (lowerMessage.includes('contact') || lowerMessage.includes('reach') || lowerMessage.includes('support') || lowerMessage.includes('help')) {
             response = "You can reach us at weddingpal@gmail.com or call 9611707778. Check the Contact section for more details and social media links.";
-        }
-        // FAQ-related questions
-        else if (lowerMessage.includes('faq') || lowerMessage.includes('question') || lowerMessage.includes('ask') || lowerMessage.includes('submit')) {
+        } else if (lowerMessage.includes('faq') || lowerMessage.includes('question') || lowerMessage.includes('ask') || lowerMessage.includes('submit')) {
             response = "Visit the FAQ section to see common questions or submit a new one using the form provided there.";
-        }
-        // Feedback-related questions
-        else if (lowerMessage.includes('feedback') || lowerMessage.includes('review') || lowerMessage.includes('comment')) {
+        } else if (lowerMessage.includes('feedback') || lowerMessage.includes('review') || lowerMessage.includes('comment')) {
             response = "You can submit feedback in the Feedbacks section. Just fill out the form with your name, email, and comments.";
-        }
-        // Vendor-related questions
-        else if (lowerMessage.includes('vendor') || lowerMessage.includes('caterer') || lowerMessage.includes('photographer') || lowerMessage.includes('decorator')) {
+        } else if (lowerMessage.includes('vendor') || lowerMessage.includes('caterer') || lowerMessage.includes('photographer') || lowerMessage.includes('decorator')) {
             response = "We can help with vendors like caterers, photographers, and decorators. Register and discuss your needs during your consultation.";
-        }
-        // Timeline-related questions
-        else if (lowerMessage.includes('timeline') || lowerMessage.includes('schedule') || lowerMessage.includes('plan') || lowerMessage.includes('when')) {
+        } else if (lowerMessage.includes('timeline') || lowerMessage.includes('schedule') || lowerMessage.includes('plan') || lowerMessage.includes('when')) {
             response = "After booking, we’ll create a personalized timeline for your wedding. Start by registering and scheduling a meeting to plan your events.";
-        }
-        // Customization-related questions
-        else if (lowerMessage.includes('custom') || lowerMessage.includes('personalize') || lowerMessage.includes('theme') || lowerMessage.includes('style')) {
+        } else if (lowerMessage.includes('custom') || lowerMessage.includes('personalize') || lowerMessage.includes('theme') || lowerMessage.includes('style')) {
             response = "We offer customization for themes, decor, and more. Share your preferences during the registration process or in your consultation.";
         }
 

@@ -174,6 +174,18 @@
             width: 150px;
             height: 150px;
         }
+        /* Fix for double arrows in slideshow */
+        .swiper-button-next, .swiper-button-prev {
+            color: white;
+            z-index: 10;
+        }
+        .swiper-button-next.swiper-button-disabled, .swiper-button-prev.swiper-button-disabled {
+            opacity: 0.35;
+        }
+        .swiper-container:not(.social-media-swiper) .swiper-button-next:nth-child(n+2),
+        .swiper-container:not(.social-media-swiper) .swiper-button-prev:nth-child(n+2) {
+            display: none;
+        }
         /* Mobile Responsiveness */
         @media (max-width: 640px) {
             .container {
@@ -520,7 +532,6 @@
                 <div class="swiper-slide">
                     <img src="images/image 9.png" alt="Bride in wedding dress" class="w-full h-full object-cover rounded-lg shadow-lg">
                 </div>
-                <div class="swiperbeautify();
                 <div class="swiper-slide">
                     <img src="images/image 15.png" alt="Wedding decor" class="w-full h-full object-cover rounded-lg shadow-lg">
                 </div>
@@ -734,9 +745,9 @@
         <form id="chatbot-form" onsubmit="sendChatbotMessage(event)" novalidate>
             <div class="flex">
                 <input type="text" id="chatbot-input" name="message" placeholder="Ask about WeddingPal..." required>
-                <button type="submit" class="bg-yellow-600 text-white py-2 px-4 rounded-r-lg hover:bg-yellow-700 transition">Send</button>
+                <button type="submit" class="bg-yellow-600 text-white py-2 px-4rounded-r-lg hover:bg-yellow-700 transition">Send</button>
             </div>
-        </form>
+               </form>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/swiper/swiper-bundle.min.js"></script>

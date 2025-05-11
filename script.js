@@ -1,7 +1,7 @@
 // Initialize Swiper for Home and Social Media
 document.addEventListener("DOMContentLoaded", function () {
-    // Home Slideshow (matches previous code)
-    new Swiper(".swiper-container:not(.social-media-swiper)", {
+    // Home Slideshow (single instance)
+    const homeSwiper = new Swiper(".swiper-container:not(.social-media-swiper)", {
         loop: true,
         autoplay: { delay: 3000 },
         navigation: { nextEl: ".swiper-button-next", prevEl: ".swiper-button-prev" },
@@ -10,7 +10,7 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 
     // Social Media Slideshow
-    new Swiper(".social-media-swiper", {
+    const socialSwiper = new Swiper(".social-media-swiper", {
         loop: true,
         slidesPerView: 3,
         spaceBetween: 10,
@@ -24,6 +24,7 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     });
 
+    // Initialize CSRF token and feedbacks
     fetchCsrfToken();
     fetchFeedbacks();
 });
@@ -35,13 +36,17 @@ const API_BASE_URL = 'https://weddingpal-api.onrender.com';
 let csrfToken = '';
 async function fetchCsrfToken() {
     try {
-        const response = await fetch(`${API_BASE_URL}/csrf-token`);
+        const response = await fetch(`${API_BASE_URL}/csrf-token`, { method: 'GET' });
+        if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+        }
         const data = await response.json();
         csrfToken = data.csrfToken;
+        console.log('CSRF token fetched:', csrfToken);
         document.querySelectorAll('[name="csrf_token"]').forEach(input => input.value = csrfToken);
     } catch (err) {
-        console.error('Failed to fetch CSRF token:', err);
-        alert('Failed to initialize. Please refresh the page.');
+        console.error('Failed to fetch CSRF token:', err.message);
+        alert('Unable to connect to the server. Please try again later or contact support at weddingpal@gmail.com.');
     }
 }
 
@@ -57,14 +62,14 @@ document.querySelectorAll('.nav-link').forEach(anchor => {
     anchor.addEventListener('click', function(e) {
         e.preventDefault();
         const section = document.querySelector(this.getAttribute('href'));
-        section.scrollIntoView({ behavior: 'smooth' });
+        if (section) section.scrollIntoView({ behavior: 'smooth' });
     });
 });
 
 // Search Functionality
 function performGlobalSearch() {
     console.log('Performing search');
-    const query = document.getElementById('global-search').value.toLowerCase().trim();
+    const query = document.getElementById('global-search')?.value.toLowerCase().trim();
     if (!query) {
         alert('Please enter a search term.');
         return;
@@ -112,22 +117,31 @@ async function handleRegistration(event) {
         });
         const text = await response.text();
         console.log('Registration response:', { status: response.status, text });
-        if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}, Text: ${text}`);
+        if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}, Text: ${text}`);
+        }
         const result = JSON.parse(text);
         document.getElementById('reg-form').classList.add('hidden');
         document.getElementById('registration-response').classList.remove('hidden');
     } catch (error) {
-        console.error('Registration error:', error);
-        alert(`Registration failed: ${error.message}`);
+        console.error('Registration error:', error.message);
+        alert(`Registration failed: ${error.message}. Please try again or contact support at weddingpal@gmail.com.`);
     }
 }
 
 // Close Response Box
 function closeResponse() {
     console.log('Closing response');
-    document.getElementById('registration-response').classList.add('hidden');
-    document.getElementById('reg-form').classList.remove('hidden');
-    document.getElementById('registration-form').reset();
+    const regForm = document.getElementById('reg-form');
+    const regResponse = document.getElementById('registration-response');
+    const regFormElement = document.getElementById('registration-form');
+    if (regForm && regResponse && regFormElement) {
+        regResponse.classList.add('hidden');
+        regForm.classList.remove('hidden');
+        regFormElement.reset();
+    } else {
+        console.error('Registration elements not found');
+    }
 }
 
 // Call and Meeting Scheduling
@@ -143,12 +157,14 @@ async function makeCall() {
         });
         const text = await response.text();
         console.log('Call response:', { status: response.status, text });
-        if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}, Text: ${text}`);
+        if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}, Text: ${text}`);
+        }
         const result = JSON.parse(text);
         alert(result.message);
     } catch (error) {
-        console.error('Call error:', error);
-        alert(`Failed to schedule call: ${error.message}`);
+        console.error('Call error:', error.message);
+        alert(`Failed to schedule call: ${error.message}. Please try again or contact support at weddingpal@gmail.com.`);
     }
 }
 
@@ -170,13 +186,15 @@ async function scheduleMeeting(event) {
         });
         const text = await response.text();
         console.log('Meeting response:', { status: response.status, text });
-        if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}, Text: ${text}`);
+        if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}, Text: ${text}`);
+        }
         const result = JSON.parse(text);
         document.getElementById('meeting-response').innerText = result.message;
         form.reset();
     } catch (error) {
-        console.error('Meeting error:', error);
-        alert(`Failed to schedule meeting: ${error.message}`);
+        console.error('Meeting error:', error.message);
+        alert(`Failed to schedule meeting: ${error.message}. Please try again or contact support at weddingpal@gmail.com.`);
     }
 }
 
@@ -199,13 +217,15 @@ async function sendText(event) {
         });
         const text = await response.text();
         console.log('Message response:', { status: response.status, text });
-        if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}, Text: ${text}`);
+        if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}, Text: ${text}`);
+        }
         const result = JSON.parse(text);
         document.getElementById('text-response').innerHTML = `${result.message}<br><span class="text-yellow-600">WeddingPal: Thanks for your message! We’ll get back to you soon.</span>`;
         form.reset();
     } catch (error) {
-        console.error('Message error:', error);
-        alert(`Failed to send message: ${error.message}`);
+        console.error('Message error:', error.message);
+        alert(`Failed to send message: ${error.message}. Please try again or contact support at weddingpal@gmail.com.`);
     }
 }
 
@@ -228,13 +248,15 @@ async function submitFAQ(event) {
         });
         const text = await response.text();
         console.log('FAQ response:', { status: response.status, text });
-        if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}, Text: ${text}`);
+        if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}, Text: ${text}`);
+        }
         const result = JSON.parse(text);
         document.getElementById('faq-response').innerText = 'Question submitted successfully!';
         form.reset();
     } catch (error) {
-        console.error('FAQ error:', error);
-        alert(`Failed to submit FAQ: ${error.message}`);
+        console.error('FAQ error:', error.message);
+        alert(`Failed to submit FAQ: ${error.message}. Please try again or contact support at weddingpal@gmail.com.`);
     }
 }
 
@@ -265,14 +287,16 @@ async function submitFeedback(event) {
         });
         const text = await response.text();
         console.log('Feedback response:', { status: response.status, text });
-        if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}, Text: ${text}`);
+        if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}, Text: ${text}`);
+        }
         const result = JSON.parse(text);
         document.getElementById('feedback-response').innerText = 'Feedback submitted successfully!';
         form.reset();
         fetchFeedbacks();
     } catch (error) {
-        console.error('Feedback error:', error);
-        alert(`Failed to submit feedback: ${error.message}`);
+        console.error('Feedback error:', error.message);
+        alert(`Failed to submit feedback: ${error.message}. Please try again or contact support at weddingpal@gmail.com.`);
     }
 }
 
@@ -283,21 +307,25 @@ async function fetchFeedbacks() {
         const response = await fetch(`${API_BASE_URL}/feedbacks`);
         const text = await response.text();
         console.log('Feedbacks response:', { status: response.status, text });
-        if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}, Text: ${text}`);
+        if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}, Text: ${text}`);
+        }
         const feedbacks = JSON.parse(text);
         const feedbackList = document.getElementById('feedback-list');
-        feedbackList.innerHTML = '';
-        feedbacks.forEach(feedback => {
-            const div = document.createElement('div');
-            div.className = 'bg-white p-4 rounded-lg shadow-lg';
-            div.innerHTML = `
-                <p class="text-gray-800 text-lg">"${feedback.feedback}"</p>
-                <p class="text-gray-600 text-sm mt-2">— ${feedback.name} (${feedback.email})</p>
-            `;
-            feedbackList.appendChild(div);
-        });
+        if (feedbackList) {
+            feedbackList.innerHTML = '';
+            feedbacks.forEach(feedback => {
+                const div = document.createElement('div');
+                div.className = 'bg-white p-4 rounded-lg shadow-lg';
+                div.innerHTML = `
+                    <p class="text-gray-800 text-lg">"${feedback.feedback}"</p>
+                    <p class="text-gray-600 text-sm mt-2">— ${feedback.name} (${feedback.email})</p>
+                `;
+                feedbackList.appendChild(div);
+            });
+        }
     } catch (error) {
-        console.error('Error fetching feedbacks:', error);
+        console.error('Error fetching feedbacks:', error.message);
     }
 }
 
@@ -305,25 +333,35 @@ async function fetchFeedbacks() {
 function toggleChatbot() {
     console.log('Toggling chatbot');
     const chatbotWindow = document.getElementById('chatbot-window');
-    chatbotWindow.classList.toggle('hidden');
+    if (chatbotWindow) {
+        chatbotWindow.classList.toggle('hidden');
+    } else {
+        console.error('Chatbot window not found');
+    }
 }
 
 function sendChatbotMessage(event) {
     event.preventDefault();
     console.log('Sending chatbot message');
     const input = document.getElementById('chatbot-input');
+    const messages = document.getElementById('chatbot-messages');
+    if (!input || !messages) {
+        console.error('Chatbot input or messages container not found');
+        return;
+    }
     const message = input.value.trim();
     if (!message) {
         console.log('Empty message');
         return;
     }
 
-    const messages = document.getElementById('chatbot-messages');
+    // Add user message
     const userMessage = document.createElement('p');
     userMessage.className = 'user-message';
     userMessage.innerHTML = `<strong>You:</strong> ${message}`;
     messages.appendChild(userMessage);
 
+    // Generate bot response
     let response = "I'm sorry, I didn't understand that. Try asking about booking, venues, costs, cancellations, or how to contact us!";
     const lowerMessage = message.toLowerCase();
 
@@ -334,7 +372,7 @@ function sendChatbotMessage(event) {
     } else if (lowerMessage.includes('cost') || lowerMessage.includes('fee') || lowerMessage.includes('price') || lowerMessage.includes('how much')) {
         response = "The advance fee for booking a WeddingPal planner is mentioned in the FAQ section. For detailed pricing, please register and schedule a meeting with us.";
     } else if (lowerMessage.includes('cancel') || lowerMessage.includes('cancellation') || lowerMessage.includes('refund')) {
-        response = "To cancel your booking, contactelian our customer care team at weddingpal@gmail.com or 9611707778, or use the cancellation option in our booking system.";
+        response = "To cancel your booking, contact our customer care team at weddingpal@gmail.com or 9611707778, or use the cancellation option in our booking system.";
     } else if (lowerMessage.includes('contact') || lowerMessage.includes('reach') || lowerMessage.includes('support') || lowerMessage.includes('help')) {
         response = "You can reach us at weddingpal@gmail.com or call 9611707778. Check the Contact section for more details and social media links.";
     } else if (lowerMessage.includes('faq') || lowerMessage.includes('question') || lowerMessage.includes('ask') || lowerMessage.includes('submit')) {
@@ -349,11 +387,13 @@ function sendChatbotMessage(event) {
         response = "We offer customization for themes, decor, and more. Share your preferences during the registration process or in your consultation.";
     }
 
+    // Add bot response
     const botMessage = document.createElement('p');
     botMessage.className = 'bot-message';
     botMessage.innerHTML = `<strong>WeddingPal:</strong> ${response}`;
     messages.appendChild(botMessage);
 
+    // Scroll to bottom
     messages.scrollTop = messages.scrollHeight;
     input.value = '';
     console.log('Chatbot response:', response);
@@ -365,6 +405,10 @@ function showVenue(type) {
     const venueSection = document.getElementById("venue-section");
     const venueImagesDiv = document.getElementById("venue-images");
     const venueDetailsDiv = document.getElementById("venue-details");
+    if (!venueSection || !venueImagesDiv || !venueDetailsDiv) {
+        console.error('Venue elements not found');
+        return;
+    }
 
     venueImagesDiv.innerHTML = "";
     venueDetailsDiv.innerHTML = "";

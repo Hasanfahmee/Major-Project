@@ -1,15 +1,14 @@
-<<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <title>WeddingPal</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <script src="https://cdn.tailwindcss.com?v=1"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css?v=1">
     <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper/swiper-bundle.min.css" />
-    <!-- Supabase Client -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper/swiper-bundle.min.css?v=1" />
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         body { font-family: 'Roboto', sans-serif; margin: 0; padding: 0; }
@@ -472,54 +471,65 @@
     </div>
 
     <!-- JavaScript -->
-    <script src="https://cdn.jsdelivr.net/npm/swiper/swiper-bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/swiper/swiper-bundle.min.js?v=1"></script>
     <script>
         document.addEventListener("DOMContentLoaded", function () {
             // Initialize Supabase
             const { createClient } = supabase;
             const supabaseClient = createClient('https://lfupbivjszsibuplcbgl.supabase.co', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxmdXBiaXZqc3pzaWJ1cGxjYmdsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDY5OTI1NjIsImV4cCI6MjA2MjU2ODU2Mn0.mhMwL_CARYDwa7wMdINJwYSvoBZEvVuRhCBkrlo8mZ4');
 
-            // Swiper Initialization
-            new Swiper(".home-swiper", {
-                loop: true,
-                autoplay: { delay: 3000, disableOnInteraction: false },
-                effect: 'fade',
-                speed: 800
-            });
-            new Swiper(".social-media-swiper", {
-                slidesPerView: 'auto',
-                spaceBetween: 10,
-                loop: true,
-                navigation: { nextEl: '.swiper-button-next', prevEl: '.swiper-button-prev' },
-                pagination: { el: '.swiper-pagination', clickable: true },
-                breakpoints: {
-                    640: { slidesPerView: 3 },
-                    768: { slidesPerView: 4 },
-                    1024: { slidesPerView: 6 }
-                }
-            });
+            // Swiper Initialization (Restored from old code)
+            if (typeof Swiper !== 'undefined') {
+                new Swiper(".home-swiper", {
+                    loop: true,
+                    autoplay: { delay: 3000 },
+                    speed: 800
+                });
+                new Swiper(".social-media-swiper", {
+                    loop: true,
+                    slidesPerView: 3,
+                    spaceBetween: 10,
+                    autoplay: { delay: 4000 },
+                    navigation: { nextEl: ".swiper-button-next", prevEl: ".swiper-button-prev" },
+                    pagination: { el: ".swiper-pagination", clickable: true },
+                    breakpoints: {
+                        320: { slidesPerView: 2, spaceBetween: 8 },
+                        640: { slidesPerView: 3, spaceBetween: 10 },
+                        1024: { slidesPerView: 4, spaceBetween: 12 }
+                    }
+                });
+            } else {
+                console.error('Swiper library not loaded');
+                alert('Slideshow functionality unavailable.');
+            }
             fetchFeedbacks();
 
             // Navigation Helper
             function navigateToSection(sectionId) {
                 console.log(`Navigating to ${sectionId}`);
                 const section = document.getElementById(sectionId);
-                section.scrollIntoView({ behavior: 'smooth' });
+                if (section) section.scrollIntoView({ behavior: 'smooth' });
+                else console.error(`Section ${sectionId} not found`);
             }
 
             // Smooth Scrolling for Nav Links
             document.querySelectorAll('.nav-link').forEach(anchor => {
                 anchor.addEventListener('click', function(e) {
                     e.preventDefault();
-                    const sectionId = this.getAttribute('href').substring(1);
-                    navigateToSection(sectionId);
+                    const section = document.querySelector(this.getAttribute('href'));
+                    if (section) section.scrollIntoView({ behavior: 'smooth' });
                 });
             });
 
             // Search Functionality
             function performGlobalSearch() {
                 console.log('Performing search');
-                const query = document.getElementById('global-search').value.toLowerCase().trim();
+                const searchInput = document.getElementById('global-search');
+                if (!searchInput) {
+                    console.error('Search input not found');
+                    return;
+                }
+                const query = searchInput.value.toLowerCase().trim();
                 if (!query) {
                     alert('Please enter a search term.');
                     return;
@@ -533,7 +543,7 @@
                         found = true;
                     }
                 });
-                if (!found) alert('No results found for "' + query + '".');
+                if (!found) alert('No results found.');
             }
 
             // Registration Handling
@@ -543,6 +553,16 @@
                 const form = event.target;
                 const formData = new FormData(form);
                 const data = Object.fromEntries(formData);
+                const emailRegex = /[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$/;
+                const mobileRegex = /^\d{10}$/;
+                if (!emailRegex.test(data.email)) {
+                    alert('Please enter a valid email address.');
+                    return;
+                }
+                if (!mobileRegex.test(data.mobile)) {
+                    alert('Please enter a valid 10-digit mobile number.');
+                    return;
+                }
                 console.log('Registration data:', data);
                 try {
                     const { error } = await supabaseClient.from('registrations').insert([data]);
@@ -558,9 +578,17 @@
             // Close Response Box
             function closeResponse() {
                 console.log('Closing response');
-                document.getElementById('registration-response').classList.add('hidden');
-                document.getElementById('reg-form').classList.remove('hidden');
-                document.getElementById('registration-form').reset();
+                const regForm = document.getElementById('reg-form');
+                const regResponse = document.getElementById('registration-response');
+                const regFormElement = document.getElementById('registration-form');
+                if (regForm && regResponse && regFormElement) {
+                    regResponse.classList.add('hidden');
+                    regForm.classList.remove('hidden');
+                    regFormElement.reset();
+                } else {
+                    console.error('Registration elements not found');
+                    alert('Unable to close response.');
+                }
             }
 
             // Call Scheduling
@@ -640,6 +668,11 @@
                 const form = event.target;
                 const formData = new FormData(form);
                 const data = Object.fromEntries(formData);
+                const emailRegex = /[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$/;
+                if (!emailRegex.test(data.email)) {
+                    alert('Please enter a valid email address.');
+                    return;
+                }
                 console.log('Feedback data:', data);
                 try {
                     const { error } = await supabaseClient.from('feedbacks').insert([data]);
@@ -656,10 +689,11 @@
             // Fetch and Display Feedbacks
             async function fetchFeedbacks() {
                 console.log('Fetching feedbacks');
+                const feedbackList = document.getElementById('feedback-list');
+                if (!feedbackList) return;
                 try {
                     const { data: feedbacks, error } = await supabaseClient.from('feedbacks').select('*');
                     if (error) throw error;
-                    const feedbackList = document.getElementById('feedback-list');
                     feedbackList.innerHTML = '';
                     feedbacks.forEach(feedback => {
                         const div = document.createElement('div');
@@ -672,6 +706,12 @@
                     });
                 } catch (error) {
                     console.error('Error fetching feedbacks:', error);
+                    feedbackList.innerHTML = `
+                        <div class="bg-white p-4 rounded-lg shadow-lg">
+                            <p class="text-gray-800 text-lg">"Great service!"</p>
+                            <p class="text-gray-600 text-sm mt-2">— John Doe (john@example.com)</p>
+                        </div>
+                    `;
                 }
             }
 
@@ -679,32 +719,33 @@
             function toggleChatbot() {
                 console.log('Toggling chatbot');
                 const chatbotWindow = document.getElementById('chatbot-window');
-                if (chatbotWindow.style.display === 'block') {
-                    chatbotWindow.style.display = 'none';
-                } else {
-                    chatbotWindow.style.display = 'block';
+                if (!chatbotWindow) {
+                    console.error('Chatbot window not found');
+                    alert('Chatbot unavailable.');
+                    return;
                 }
+                chatbotWindow.classList.toggle('hidden');
+                console.log('Chatbot toggled:', chatbotWindow.classList.contains('hidden') ? 'Hidden' : 'Visible');
             }
 
             function sendChatbotMessage(event) {
                 event.preventDefault();
                 console.log('Sending chatbot message');
                 const input = document.getElementById('chatbot-input');
-                const message = input.value.trim();
-                if (!message) {
-                    console.log('Empty message');
+                const messages = document.getElementById('chatbot-messages');
+                if (!input || !messages) {
+                    console.error('Chatbot input or messages not found');
+                    alert('Chatbot unavailable.');
                     return;
                 }
-
-                const messages = document.getElementById('chatbot-messages');
+                const message = input.value.trim();
+                if (!message) return;
                 const userMessage = document.createElement('p');
                 userMessage.className = 'user-message';
                 userMessage.innerHTML = `<strong>You:</strong> ${message}`;
                 messages.appendChild(userMessage);
-
                 let response = "I'm sorry, I didn't understand that. Try asking about booking, venues, costs, cancellations, or how to contact us!";
                 const lowerMessage = message.toLowerCase();
-
                 if (lowerMessage.includes('book') || lowerMessage.includes('planner') || lowerMessage.includes('how to start') || lowerMessage.includes('register')) {
                     response = "To book a WeddingPal planner, go to the Registration section, fill out the form with your wedding details, and schedule a call or meeting to get started.";
                 } else if (lowerMessage.includes('venue') || lowerMessage.includes('venues') || lowerMessage.includes('location') || lowerMessage.includes('sangeet') || lowerMessage.includes('mehendi') || lowerMessage.includes('reception') || lowerMessage.includes('ceremony')) {
@@ -726,12 +767,10 @@
                 } else if (lowerMessage.includes('custom') || lowerMessage.includes('personalize') || lowerMessage.includes('theme') || lowerMessage.includes('style')) {
                     response = "We offer customization for themes, decor, and more. Share your preferences during the registration process or in your consultation.";
                 }
-
                 const botMessage = document.createElement('p');
                 botMessage.className = 'bot-message';
                 botMessage.innerHTML = `<strong>WeddingPal:</strong> ${response}`;
                 messages.appendChild(botMessage);
-
                 messages.scrollTop = messages.scrollHeight;
                 input.value = '';
                 console.log('Chatbot response:', response);
@@ -743,24 +782,25 @@
                 const venueSection = document.getElementById("venue-section");
                 const venueImagesDiv = document.getElementById("venue-images");
                 const venueDetailsDiv = document.getElementById("venue-details");
-
+                if (!venueSection || !venueImagesDiv || !venueDetailsDiv) {
+                    console.error('Venue elements not found');
+                    alert('Venue details unavailable.');
+                    return;
+                }
                 venueImagesDiv.innerHTML = "";
                 venueDetailsDiv.innerHTML = "";
-
                 const venueDetails = {
                     "sangeet": "A lively evening with DJ nights, stage setup, and themed decor to celebrate the joy of togetherness.",
                     "mehendi": "A colorful afternoon with floral decor, henna artists, refreshments, and cozy seating arrangements.",
                     "reception": "A grand celebration with elegant lighting, music bands, luxurious buffet, and curated themes.",
                     "ceremony": "A sacred setting with traditional mandap, rituals, floral designs, and divine ambiance."
                 };
-
                 const venueImages = {
                     "sangeet": ["image s1.png", "image s2.png", "image s3.png", "image s4.png", "image s5.png", "image s6.png", "image s7.png", "image s8.png"],
                     "mehendi": ["image m1.png", "image m2.png", "image m3.png", "image m4.png", "image m5.png", "image m6.png", "image m7.png", "image m8.png"],
                     "reception": ["image r1.png", "image r2.png", "image r3.png", "image r4.png", "image r5.png", "image r6.png", "image r7.png", "image r8.png"],
                     "ceremony": ["image c1.png", "image c2.png", "image c3.png", "image c4.png", "image c5.png", "image c6.png", "image c7.png", "image c8.png"]
                 };
-
                 const venueFeatures = {
                     "image s1.png": ["Live Band", "Red Carpet Entry", "Light Tunnel", "Fireworks", "Photobooth", "Table Service"],
                     "image s2.png": ["Luxury Chairs", "Dance Floor", "Open Bar", "Reception Cake", "Backdrop Panel", "Golden Theme"],
@@ -795,9 +835,7 @@
                     "image c7.png": ["Royal Mandap", "Chandan Station", "Spiritual Music", "Kalash Setup", "Chorus Singers", "Handmade Rangoli"],
                     "image c8.png": ["Temple Theme", "Red-Yellow Theme", "Ornamental Drapes", "Flute Player", "Havan Kund", "Vedic Chanting"]
                 };
-
                 venueDetailsDiv.innerHTML = `<p class="text-xl bg-yellow-200 rounded-lg p-4 shadow-md">${venueDetails[type]}</p>`;
-
                 venueImages[type].forEach(image => {
                     const card = document.createElement("div");
                     card.className = "bg-white rounded-lg shadow-md p-4 w-72 text-left";
@@ -816,7 +854,6 @@
                     card.appendChild(featureList);
                     venueImagesDiv.appendChild(card);
                 });
-
                 venueSection.classList.remove("hidden");
                 venueSection.scrollIntoView({ behavior: "smooth" });
             }
